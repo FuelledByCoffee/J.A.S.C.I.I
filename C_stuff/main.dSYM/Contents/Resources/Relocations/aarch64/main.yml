@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/jassi/Desktop/JASCII/C_stuff/main'
+relocations:     []
+...

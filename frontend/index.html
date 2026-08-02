@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>J.A.S.C.I.I</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./vendor/jquery.min.js"></script>
+  <script src="./vendor/coffeescript.js"></script>
+  <link rel="icon" type="image/x-icon" href="finally.png"
+</head>
+
+<body class="bg-[#FAF9F6]">
+  <input type="file" id="Image-input" accept="image/png, image/jpg, image/jpeg" style="display: none;" />
+  <style>
+    @font-face {
+      font-family: custom;
+      src: url(JetBrainsMonoNL-Regular.ttf);
+    }
+
+    #lol {
+      border: 2px solid black;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #loll {
+      border: 2px solid black;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+  <h1 id="heading" class="text-[9rem] text-center pt-18 font-[custom]">
+    J.A.S.C.I.I
+  </h1>
+  <h2 class="text-[2rem] font-[custom] text-center pb-20">
+    Jassi's Image To <u class="text-blue-400"><span class="text-blue-400"><a
+          href="https://en.wikipedia.org/wiki/ASCII_art" target="_blank">A.S.C.I.I</a></span></u> Art Converter
+  </h2>
+  <div id="lol" class="size-100 w-150 p-20 justify-center pt-28 items-center">
+    <h1 id="my-btn" class="text-center text-[3rem] font-[custom] pb-8">Click Me To Select Your Image <br> <span
+        class="text-sm">only jpeg, png & jpg file formats allowed :)</span></h1>
+  </div>
+  <div id="loll" class="flex justify-center items-center p-4" style="display: none;">
+    <pre id="log" class="text-left font-[custom] text-xs leading-[0.85] whitespace-pre"></pre>
+  </div>
+  <button id="reset" class="font-[custom] text-[1rem] text-center block mx-auto my-6" style="display: none;">do you want to reset?</button>
+  <script>
+    var Module = {
+      print: function (message) {
+        var logger = document.getElementById('log');
+        if (logger) {
+          logger.style.whiteSpace = 'pre';    
+          logger.style.lineHeight = '1.1';   
+          logger.style.textAlign = 'left';   
+          logger.textContent += message + '\n';
+        }
+      }
+    };
+    document.getElementById("Image-input").addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      document.getElementById('log').textContent = '';
+      const buffer = await file.arrayBuffer();
+      Module.FS.writeFile("googoo.png", new Uint8Array(buffer));
+      Module.callMain();
+      const getWidth = Module.cwrap('image_width', 'number', []);
+      $("#loll").css({
+        "width": (getWidth() + 4) + "ch",
+        "height": "auto"
+      });
+    });
+  </script>
+  <script type="text/coffeescript">
+$ ->
+  $("#my-btn").on "click", ->
+    $("#Image-input").click()
+  $("#Image-input").on "change", (e) ->
+    file = e.target.files[0]
+    $('#loll').show()
+    $('#lol').hide()
+    $('#reset').show()
+  </script>
+  <script type="text/coffeescript">
+$ ->
+  $('#my-btn').on 'click', ->
+    $.get './node_modules/ping/data/src/qr.html'
+  </script>
+  <script>
+    $('#reset').click(function () {
+      location.reload();
+    });
+  </script>
+  <script src="a.out.js"></script>
+</body>
+
+</html>
