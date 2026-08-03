@@ -1,3 +1,4 @@
+<!--- omfg why are html comments so fucking bad, btw jassi here --->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,14 +16,14 @@
   <style>
     @font-face {
       font-family: custom;
-      src: url(JetBrainsMonoNL-Regular.ttf);
+      src: url(JetBrainsMonoNL-Regular.ttf);   /*why tf do i have to use different comments for css smh, anyways yes one of the greatest fonts aot*/
     }
 
     #lol {
       border: 2px solid black;
       margin-left: auto;
       margin-right: auto;
-      display: flex;
+      display: flex;      
       justify-content: center;
       align-items: center;
     }
@@ -52,7 +53,7 @@
   </div>
   <button id="reset" class="font-[custom] text-[1rem] text-center block mx-auto my-6" style="display: none;">do you want to reset?</button>
   <script>
-    var Module = {
+    var Module = {                               // finnally, anyways i am sorry but line 56-79 are wrriten by an llm, i dont know a single fucking thing which is going on, if you can fix this slop please contribute. i am sorry for using an llm :c
       print: function (message) {
         var logger = document.getElementById('log');
         if (logger) {
@@ -76,20 +77,20 @@
         "height": "auto"
       });
     });
-  </script>
-  <script type="text/coffeescript">
+  </script> <!--- aha, coffeescript and jquery in 2026, please dont laugh at me :c --->
+  <script type="text/coffeescript">  
 $ ->
   $("#my-btn").on "click", ->
     $("#Image-input").click()
-  $("#Image-input").on "change", (e) ->
+  $("#Image-input").on "change", (e) ->             
     file = e.target.files[0]
     $('#loll').show()
     $('#lol').hide()
     $('#reset').show()
-  </script>
-  <script type="text/coffeescript">
+  </script><!--- go check it or smth --->
+  <script type="text/coffeescript"> 
 $ ->
-  $('#my-btn').on 'click', ->
+  $('#my-btn').on 'click', ->   
     $.get './node_modules/ping/data/src/qr.html'
   </script>
   <script>
@@ -97,7 +98,7 @@ $ ->
       location.reload();
     });
   </script>
-  <script src="a.out.js"></script>
+  <script src="a.out.js"></script> <!--- my wasm thing --->
 </body>
-
+<!--- goodbye, jassi out --->
 </html>
