@@ -17,11 +17,13 @@ umm because:
 2. Your images (and potentially videos in the future) are not going to some random data center so that Zuckerberg can feed it to meta
 3. It's freeeeeeeeeeeeee :D
 4. Why not? 
-> Credits to Sophie for helping with WASM implementation <br>
-thats it, jassi out :)
+
 
 ### How to use
 1. Go to the [website](https://jascii.jassi.dev)
 2. Simply upload the picture. (Note: Only `.jpg`, `.jpeg`, and `.png`formats are allowed)
 3. Ta-da! There you have it.
-4. Use the reset button to convert another image to ASCII
+4. Use the reset button to convert another image to ASCII.
+
+> Credits to Sophie for helping with WASM implementation <br>
+thats it, jassi out :)
