@@ -14,7 +14,7 @@ wow first readme, kinda nervous.
 ### Why should i use this?
 umm because:
 1. its free :)
-2. your images (and potentially videos in the future) are not going to some random data base so that zuckerberg can feed it to meta
+2. your images (and potentially videos in the future) are not going to some random data center so that zuckerberg can feed it to meta
 3. its freeeeeeeeeeeeee :D
 4. why not 
 > credit to sophie for helping with wasm implementation <br>
