@@ -47,7 +47,7 @@ int main (void){
   }
   else {
     stbir_resize_uint8_srgb(img, width, height, 0, img_resize, width_shrunk, height_shrunk, 0, STBIR_RGB);    //stb the goat
-  }
+      }
   printf("\n");
   while (y != height_shrunk) {
     while (x != width_shrunk) {

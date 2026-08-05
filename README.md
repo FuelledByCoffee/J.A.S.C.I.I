@@ -4,13 +4,6 @@ wow first readme, kinda nervous.
 > Jassi's image (maybe even videos later c: ) to ASCII art program, it uses C for the ASCII generation and *web technology* for the front end. Watch it
 [live](https://jascii.jassi.dev/)
 
-## Some Examples
-(Rem from rezero, i am sorry idk where the art is from) <br>
-![Wow! You could not load the image lol](rem.jpg)
-![Is your internet really that bad?](rem_ASCII.webp) <br>
-(Mizuki Akiyama from project sekai, image is from: https://projectsekai.fandom.com/wiki/Akiyama_Mizuki?file=Mizuki+3rd+Anniversary.png) <br>
-![Gng get a better router :sob:](mizuki_akiyama.png)
-![Bad internet lolllll](mizuk_akiyama_ASCII.png) <br>
 ### Why should i use this?
 umm because:
 1. It's free :)
@@ -24,6 +17,14 @@ umm because:
 2. Simply upload the picture. (Note: Only `.jpg`, `.jpeg`, and `.png`formats are allowed)
 3. Ta-da! There you have it.
 4. Use the reset button to convert another image to ASCII.
+
+## Some Examples
+Rem from rezero, i am sorry idk where the art is from <br>
+![Wow! You could not load the image lol](rem.jpg)
+![Is your internet really that bad?](rem_ASCII.webp) <br>
+Hornet, from silksong (an amazing game actually) <br>
+![Gng get a better router :sob:](hornet.jpg)
+![Bad internet lolllll](hornet_ASCII.png) <br>
 
 > Credits to Sophie for helping with WASM implementation <br>
 thats it, jassi out :)
