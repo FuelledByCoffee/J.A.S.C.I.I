@@ -22,7 +22,7 @@ int main (void){
   int x = 0;
   int y = 0;
   int i = 0;
-  char ASCIIMAP[29] = "N@#W$9876543210?!abc;:+=-_,. ";    //i stole this online
+  char ASCIIMAP[31] = "N@#W$9876543210?!abc;:+=-_,.  ";    //i stole this online
   int num_char = strlen(ASCIIMAP);
   int index;
   int img_index;
