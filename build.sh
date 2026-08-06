@@ -15,7 +15,9 @@ emcc main.c -o a.out.js \
 mv a.out.js ../frontend/
 mv a.out.wasm ../frontend/
 cd ..
+npm install
 cd frontend/
 npm install
-cd ..
-npm install
+echo "Go to http://localhost:6969/ <-- yes 6969 very funni number :)"
+node server.js
+
