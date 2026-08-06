@@ -1,5 +1,5 @@
 #!/bin/bash
-cd /C_stuff
+cd C_stuff/
 git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk 
 ./emsdk install latest
@@ -12,10 +12,10 @@ emcc main.c -o a.out.js \
   -s EXIT_RUNTIME=0 \
   -s ALLOW_MEMORY_GROWTH=1 \
   -s EXPORTED_RUNTIME_METHODS="['FS', 'callMain', 'cwrap']"
-mv a.out.js ./frontend/
-mv a.out.wasm ./frontend/
+mv a.out.js ../frontend/
+mv a.out.wasm ../frontend/
 cd ..
-cd /frontend
+cd frontend/
 npm install
 cd ..
 npm install
