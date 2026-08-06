@@ -1,3 +1,4 @@
 *.json
 .DS_Store
 /C_stuff/main.dSYM
+node_modules
