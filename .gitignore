@@ -1,4 +1,6 @@
 *.json
 .DS_Store
 /C_stuff/main.dSYM
+/C_stuff/emsdk
 node_modules
+/frontend/a.out*
