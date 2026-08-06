@@ -18,6 +18,7 @@ umm because:
 2. Simply upload the picture. (Note: Only `.jpg`, `.jpeg`, and `.png`formats are allowed)
 3. Ta-da! There you have it.
 4. Use the reset button to convert another image to ASCII.
+> NOTE: You Can Download The Repository And Run `build.sh` So That You Can Have A Working Version Of The Website
 
 ## Some Examples
 Rem from rezero, i am sorry idk where the art is from <br>
