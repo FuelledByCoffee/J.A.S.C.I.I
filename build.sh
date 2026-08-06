@@ -1,0 +1,21 @@
+#!/bin/bash
+cd /C_stuff
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk 
+./emsdk install latest
+./emsdk activate latest
+source ./emsdk_env.sh
+cd ..
+emcc main.c -o a.out.js \
+  -O3 \
+  -s INVOKE_RUN=0 \
+  -s EXIT_RUNTIME=0 \
+  -s ALLOW_MEMORY_GROWTH=1 \
+  -s EXPORTED_RUNTIME_METHODS="['FS', 'callMain', 'cwrap']"
+mv a.out.js ./frontend/
+mv a.out.wasm ./frontend/
+cd ..
+cd /frontend
+npm install
+cd ..
+npm install
