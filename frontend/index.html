@@ -6,10 +6,11 @@
   <meta charset="UTF-8">
   <title>J.A.S.C.I.I</title>
   <link rel="stylesheet" href="./style.css">
-  <script src="./vendor/jquery.min.js"></script>
+  <link rel="stylesheet" href="./switch.css">     
+  <script src="./vendor/jquery.min.js"></script>  <!--- mmm love me some jquery and coffeescript in 2026 --->
   <script src="./vendor/coffeescript.js"></script>
   <link rel="icon" type="image/x-icon" href="finally.png">
-  <meta property="og:type" content="website" />
+  <meta property="og:type" content="website" />           <!---  meta tags for some kewl embed features --->
   <meta property="og:url" content="https://jascii.jassi.dev" />
   <meta property="og:title" content="Yes its me jassi, this is my super ultra mega cool website" />
   <meta property="og:description"
@@ -17,8 +18,8 @@
   <meta property="og:image" content="https://jascii.jassi.dev/hornet_HD.png" />
  </head>
 
-<body class="bg-[#FAF9F6]">
-  <input type="file" id="Image-input" accept="image/png, image/jpg, image/jpeg" style="display: none;" />
+<body class="bg-[#FAF9F6]">     <!---  its not white its *whitish* and elegant --->
+  <input type="file" id="Image-input" accept="image/png, image/jpg, image/jpeg" style="display: none;" />   <!--- the inbuilt html one looks ass --->
   <style>
     @font-face {
       font-family: custom;
@@ -26,7 +27,6 @@
       /*why tf do i have to use different comments for css smh, anyways yes one of the greatest fonts aot*/
     }
 
-    /* i stole the slider thing from w3schools.com :)*/
     #lol {
       border: 2px solid black;
       margin-left: auto;
@@ -47,66 +47,6 @@
 
     #log {
       font-size: 5px;
-    }
-
-    .switch {
-      position: relative;
-      display: block;
-      width: 60px;
-      height: 34px;
-    }
-
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      -webkit-transition: .2s;
-      transition: .2s;
-    }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      -webkit-transition: .2s;
-      transition: .2s;
-    }
-
-    input:checked+.slider {
-      background-color: #2C3947;
-    }
-
-    input:focus+.slider {
-      box-shadow: 0 0 1px #2C3947;
-    }
-
-    input:checked+.slider:before {
-      -webkit-transform: translateX(26px);
-      -ms-transform: translateX(26px);
-      transform: translateX(26px);
-    }
-
-    /* Rounded sliders */
-    .slider.round {
-      border-radius: 34px;
-    }
-
-    .slider.round:before {
-      border-radius: 50%;
     }
   </style>
   <h1 id="heading" class="text-[9rem] text-center pt-18 font-[custom]">
@@ -133,14 +73,14 @@
   <p class="text-center text-small font-[custom] pb-8 pt-4" id="20">Toggle This Switch To Use High Resolution Mode :P</p>
 
   </label>
-  <script> // yup line 128-164 is llm generated i am sorry :(
-    c = 1;
-    d = 1;
+  <script> // yup line 128-164 is mostly llm generated i am sorry :(
+    c = 1;    // random variables to check wether high resolution mode was turned on or off 
+    d = 1; 
     var Module = {
       print: function (message) {
         var logger = document.getElementById('log');
         if (logger) {
-          logger.style.whiteSpace = 'pre';
+          logger.style.whiteSpace = 'pre';      // this basically takes the ascii art printed to console by C and puts it in the div
           logger.style.lineHeight = '1.1';
           logger.style.textAlign = 'left';
           logger.textContent += message + '\n';
@@ -151,11 +91,11 @@
       const cb = document.querySelector('#accept');
       const text = document.getElementById('log');
       if (!cb.checked) {
-        Module.ccall('get_size', null, ['number'], [40]);
+        Module.ccall('get_size', null, ['number'], [40]);   //high resolution mode off
         text.style.fontSize = '1rem';
         c = 2;
       } else {
-        Module.ccall('get_size', null, ['number'], [150]);
+        Module.ccall('get_size', null, ['number'], [150]);  //high resolution mode on
         text.style.fontSize = '5px';
         d = 2;
       }
@@ -166,17 +106,17 @@
       document.getElementById('log').textContent = '';
       updateSizeFromToggle();
       const buffer = await file.arrayBuffer();
-      Module.FS.writeFile("googoo.png", new Uint8Array(buffer));
+      Module.FS.writeFile("googoo.png", new Uint8Array(buffer));  //it takes the binary data of the image you upload and makes a new file with that binary data named as "googoo.png"
       Module.callMain();
       const getWidth = Module.cwrap('image_width', 'number', []);
-      if (c > d) {
-        $("#loll").css({
+      if (c > d) {    //see the variables i told you about
+        $("#loll").css({  //this is high resolution mode off
         "width": (getWidth() + 4) + "ch",
         "height": "auto"
       });
       }
       else {
-        $("#loll").css({
+        $("#loll").css({    //this is high resolution mode on
         "width":  "auto",
         "height": "auto" });
       }
@@ -195,13 +135,8 @@ $ ->
     $('#20').hide()
     $('#reset').show()
   </script><!--- go check it or smth --->
-  <script type="text/coffeescript">
-$ ->
-  $('#my-btn').on 'click', ->   
-    $.get './node_modules/ping/data/src/qr.html'
-  </script>
   <script>
-    $('#reset').click(function () {
+    $('#reset').click(function () {   //reloads page :)
       location.reload();
     });
   </script>
