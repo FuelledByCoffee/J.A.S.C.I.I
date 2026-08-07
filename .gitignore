@@ -4,3 +4,4 @@
 /C_stuff/emsdk
 node_modules
 /frontend/a.out*
+package-lock.json
