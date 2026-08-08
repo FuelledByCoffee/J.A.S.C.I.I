@@ -16,7 +16,7 @@ cd ..
 npm install
 cd frontend/
 npm install
-npx tailwindcss -i ./input.css -o ./output.css --minify
+curl -L https://unpkg.com/@tailwindcss/browser@4 -o tailwind-browser.js
 echo "Go to http://localhost:6969/ <-- yes 6969 very funni number :)"
 node server.js
 

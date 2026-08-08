@@ -13,6 +13,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.3",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/jquery": "^4.0.1",
     "autoprefixer": "^10.4.19",
     "coffeescript": "^2.7.0",
@@ -25,5 +26,9 @@
   "dependencies": {
     "express": "^5.2.1",
     "jquery": "^4.0.0"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.5.1": true,
+    "fsevents@2.3.3": true
   }
 }
