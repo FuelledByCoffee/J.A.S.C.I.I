@@ -1,7 +1,7 @@
 .DS_Store
 *.dSYM
 /C_stuff/main.dSYM
-/emsdk
+emsdk
 node_modules
 frontend/scripts/a.out*
 package-lock.json
@@ -9,3 +9,4 @@ package-lock.json
 C_stuff/header_files/
 frontend/style.css
 frontend/scripts/tailwind-browser.js
+frontend/node_modules
