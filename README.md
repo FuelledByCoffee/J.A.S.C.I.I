@@ -22,11 +22,11 @@ umm because:
 
 ## Some Examples
 Rem from rezero, i am sorry idk where the art is from <br>
-![Wow! You could not load the image lol](rem.jpg)
-![Is your internet really that bad?](rem_ASCII.webp) <br>
+![Wow! You could not load the image lol](/assets/rem.jpg)
+![Is your internet really that bad?](/assets/rem_ASCII.webp) <br>
 Hornet, from silksong (an amazing game actually) <br>
-![Gng get a better router :sob:](hornet.jpg)
-![Bad internet lolllll](hornet_ASCII.png) <br>
+![Gng get a better router :sob:](/assets/hornet.jpg)
+![Bad internet lolllll](/assets/hornet_ASCII.png) <br>
 
 > Credits to Sophie for helping with WASM implementation <br>
 thats it, jassi out :)
