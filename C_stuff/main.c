@@ -102,10 +102,10 @@ int main(void)
       changeSaturation(&r, &g, &b, 1.5);
       if (r > 255) {r = 255;} //what if change saturation causes some weird shit, this is to fix that
       else if (r < 0) {r = 0;}
-      if (g > 255) {r = 255;}
-      else if (g < 0) {r = 0;}
-      if (b > 255) {r = 255;}
-      else if (b < 0) {r = 0;}
+      if (g > 255) {g = 255;}
+      else if (g < 0) {g = 0;}
+      if (b > 255) {b = 255;}
+      else if (b < 0) {b = 0;}
       brightness = ((r * 0.2126) + (g * 0.7152) + (b * 0.0722)); // basically the entire ascii thing, so like till one y is done it keeps doing the x axis so like imagine (0,0) so it will keep increasing x by one until width is reached then it increases y by one and resets x. also it prints every pixel with a character based of brightness using luma formula
       index = (int)((brightness * (num_char - 1)) / 255);
       if (index >= num_char) {index = num_char - 1;}
