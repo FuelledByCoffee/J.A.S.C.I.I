@@ -48,5 +48,5 @@ test: all
 
 .PHONY: clean
 clean:
-	rm -f ascii
+	rm -f $(target)
 	rm -rf $(objects)
