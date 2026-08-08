@@ -7,9 +7,8 @@ curl -sL https://raw.githubusercontent.com/nothings/stb/master/stb_image.h -o C_
 curl -sL https://raw.githubusercontent.com/nothings/stb/master/stb_image_resize2.h -o C_stuff/header_files/stb_image_resize2.h
 curl -sL https://raw.githubusercontent.com/nothings/stb/master/stb_image_write.h -o C_stuff/header_files/stb_image_write.h
 
-if [ ! -d "emsdk" ]; then
-  git clone https://github.com/emscripten-core/emsdk.git
-fi
+rm -rf emsdk
+git clone https://github.com/emscripten-core/emsdk.git
 
 cd emsdk
 ./emsdk install latest
