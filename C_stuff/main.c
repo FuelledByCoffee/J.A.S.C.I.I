@@ -1,18 +1,15 @@
-// welcome welcome, reading my shitty code are we xD, anyways keep going down. I will try my best to explain stuff :)
+// welcome welcome, reading my shitty code are we xD, anyways keep going down. I
+// will try my best to explain stuff :)
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #ifdef __EMSCRIPTEN__
-#include <emscripten.h>
+	#include <emscripten.h>
 #else
-#define EMSCRIPTEN_KEEPALIVE
+	#define EMSCRIPTEN_KEEPALIVE
 #endif
-#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-#define STB_IMAGE_RESIZE_IMPLEMENTATION // ok so like line 2-15 just import the stuff needed such as Stb libraries for processing and resizing images and ofc stdio.h the goat cant even print without it lol
 #include "stb_image_resize2.h"
 
 #define Pr .299
@@ -34,9 +31,8 @@ void color_set(int z)
   color = z;
 }
 
-void changeSaturation(double *R, double *G, double *B, double change)
-{ // stole this code from here: https://alienryderflex.com/saturation.html
-
+// stole this code from here: https://alienryderflex.com/saturation.html
+void changeSaturation(double *R, double *G, double *B, double change) {
   double P = sqrt(
       (*R) * (*R) * Pr +
       (*G) * (*G) * Pg +
@@ -49,6 +45,7 @@ void changeSaturation(double *R, double *G, double *B, double change)
 
 int width_shrunk;
 int height_shrunk;
+
 int main(void)
 {
   int width, height, original_channels; // ah yes, initialising some *kewl* variables :)
@@ -130,16 +127,16 @@ int main(void)
   free(img); // no ram hogging in here :D
 }
 
+
 EMSCRIPTEN_KEEPALIVE
-int image_width()
-{
-  return width_shrunk; // this is to give the data to emscripten so that it can resize the div
+int image_width() {
+	return width_shrunk; // this is to give the data to emscripten so that it
+	                     // can resize the div
 }
 
 EMSCRIPTEN_KEEPALIVE
-int image_height()
-{
-  return height_shrunk; // same as above
+int image_height() {
+	return height_shrunk; // same as above
 }
 
 // i hope you did not find my comments annoying, jassi out :)
