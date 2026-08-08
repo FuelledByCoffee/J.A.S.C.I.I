@@ -6,20 +6,23 @@
   <meta charset="UTF-8">
   <title>J.A.S.C.I.I</title>
   <script src="./scripts/tailwind-browser.js"></script>
-  <link rel="stylesheet" href="./switch.css">     
-  <script src="./scripts/coffeescript.js"></script>  <!--- mmm love me some jquery and coffeescript in 2026 --->
+  <link rel="stylesheet" href="./switch.css">
+  <script src="./scripts/coffeescript.js"></script> <!--- mmm love me some jquery and coffeescript in 2026 --->
   <script src="./scripts/jquery.min.js"></script>
+  <link rel="stylesheet" href="node_modules/@xterm/xterm/css/xterm.css" />
+  <script src="node_modules/@xterm/xterm/lib/xterm.js"></script>
   <link rel="icon" type="image/x-icon" href="/assets/finally.png">
-  <meta property="og:type" content="website" />           <!---  meta tags for some kewl embed features --->
+  <meta property="og:type" content="website" /> <!---  meta tags for some kewl embed features --->
   <meta property="og:url" content="https://jascii.jassi.dev" />
   <meta property="og:title" content="Yes its me jassi, this is my super ultra mega cool website" />
   <meta property="og:description"
     content="it converts your images into ascii art without any ads or bloat, also unlike other websites which feed your images to mark zuckerberg, this one does not :D" />
   <meta property="og:image" content="https://jascii.jassi.dev/assets/hornet_HD.png" />
- </head>
+</head>
 
-<body class="bg-[#FAF9F6]">     <!---  its not white its *whitish* and elegant --->
-  <input type="file" id="Image-input" accept="image/png, image/jpg, image/jpeg" style="display: none;" />   <!--- the inbuilt html one looks ass --->
+<body class="bg-[#FAF9F6]"> <!---  its not white its *whitish* and elegant --->
+  <input type="file" id="Image-input" accept="image/png, image/jpg, image/jpeg" style="display: none;" />
+  <!--- the inbuilt html one looks ass --->
   <style>
     @font-face {
       font-family: custom;
@@ -62,65 +65,59 @@
   </div>
   <div id="loll" class="flex justify-center items-center p-4" style="display: none;">
     <pre id="log" class="text-left font-[custom] leading-[0.85] whitespace-pre"></pre>
+    <div id="logg" class="text-left font-[custom] leading-[0.85] whitespace-pre"></div>
   </div>
   <button id="reset" class="font-[custom] text-[1rem] text-center block mx-auto my-6" style="display: none;">do you want
     to reset?</button>
-  <div class="flex pt-10 justify-center items-center" id="10">
+  <div class="flex pt-10 justify-center items-center align-items gap-10" id="10">
     <label class="switch">
       <input type="checkbox" id="accept" name="accept" value="yes">
       <span class="slider round"></span>
+      </label>
+    <label class="switch">
+      <input type="checkbox" id="color" name="accept" value="yes">
+      <span class="slider round"></span>
+      </label>
   </div>
-  <p class="text-center text-small font-[custom] pb-8 pt-4" id="20">Toggle This Switch To Use High Resolution Mode :P</p>
+    </div>
+    <p class="text-center text-small font-[custom] pb-8 pt-4" id="20">Toggle Left Switch To Use High Resolution Mode <br> Toggle Right Switch To Use Coloured Mode :P
+    </p>
 
   </label>
-  <script> // yup line 128-164 is mostly llm generated i am sorry :(
-    c = 1;    // random variables to check wether high resolution mode was turned on or off 
-    d = 1; 
+  <script>
+    const term = new Terminal({ convertEol: true });
     var Module = {
       print: function (message) {
-        var logger = document.getElementById('log');
-        if (logger) {
-          logger.style.whiteSpace = 'pre';      // this basically takes the ascii art printed to console by C and puts it in the div
-          logger.style.lineHeight = '1.1';
-          logger.style.textAlign = 'left';
-          logger.textContent += message + '\n';
-        }
+        term.writeln(message);      //takes stuff printed by C and writes that to Xterm,js
       }
     };
     function updateSizeFromToggle() {
       const cb = document.querySelector('#accept');
-      const text = document.getElementById('log');
+      const cc = document.querySelector('#color');
       if (!cb.checked) {
         Module.ccall('get_size', null, ['number'], [40]);   //high resolution mode off
-        text.style.fontSize = '1rem';
-        c = 2;
+        term.options.fontSize = 16;
       } else {
         Module.ccall('get_size', null, ['number'], [150]);  //high resolution mode on
-        text.style.fontSize = '5px';
-        d = 2;
+        term.options.fontSize = 5;
+      }
+      if (!cc.checked) {
+        Module.ccall('color_set', null, ['number'], [0]); //Colour OFF
+      } else {
+        Module.ccall('color_set', null, ['number'], [1]); //Colour ON
       }
     }
-    document.getElementById("Image-input").addEventListener("change", async (e) => {
+    document.getElementById("Image-input").addEventListener("change", async (e) => {    // yup line 110-121 is mostly llm generated i am sorry :(
       const file = e.target.files[0];
       if (!file) return;
-      document.getElementById('log').textContent = '';
+      term.clear();
       updateSizeFromToggle();
       const buffer = await file.arrayBuffer();
       Module.FS.writeFile("googoo.png", new Uint8Array(buffer));  //it takes the binary data of the image you upload and makes a new file with that binary data named as "googoo.png"
       Module.callMain();
       const getWidth = Module.cwrap('image_width', 'number', []);
-      if (c > d) {    //see the variables i told you about
-        $("#loll").css({  //this is high resolution mode off
-        "width": (getWidth() + 4) + "ch",
-        "height": "auto"
-      });
-      }
-      else {
-        $("#loll").css({    //this is high resolution mode on
-        "width":  "auto",
-        "height": "auto" });
-      }
-
+      const getHeight = Module.cwrap('image_height', 'number', []);
+      term.resize(getWidth() + 10, getHeight() + 10);
     });
   </script> <!--- aha, coffeescript and jquery in 2026, please dont laugh at me :c --->
   <script type="text/coffeescript">
@@ -130,6 +127,7 @@ $ ->
   $("#Image-input").on "change", (e) ->             
     file = e.target.files[0]
     $('#loll').show()
+    term.open(document.getElementById('logg')); #Opens XTerm.js in here
     $('#lol').hide()
     $('#10').hide()
     $('#20').hide()

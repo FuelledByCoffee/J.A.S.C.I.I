@@ -15,28 +15,37 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION // ok so like line 2-15 just import the stuff needed such as Stb libraries for processing and resizing images and ofc stdio.h the goat cant even print without it lol
 #include "stb_image_resize2.h"
 
-
-#define  Pr  .299
-#define  Pg  .587
-#define  Pb  .114
+#define Pr .299
+#define Pg .587
+#define Pb .114
 
 int size;
+int color;
 
 EMSCRIPTEN_KEEPALIVE
-void get_size(int a) {
-    size = a;
-  }
+void get_size(int a)
+{
+  size = a;
+}
 
-void changeSaturation(double *R, double *G, double *B, double change) {       //stole this code from here: https://alienryderflex.com/saturation.html
+EMSCRIPTEN_KEEPALIVE
+void color_set(int z)
+{
+  color = z;
+}
 
-  double  P=sqrt(
-  (*R)*(*R)*Pr+
-  (*G)*(*G)*Pg+
-  (*B)*(*B)*Pb ) ;
+void changeSaturation(double *R, double *G, double *B, double change)
+{ // stole this code from here: https://alienryderflex.com/saturation.html
 
-  *R=P+((*R)-P)*change;
-  *G=P+((*G)-P)*change;
-  *B=P+((*B)-P)*change; }
+  double P = sqrt(
+      (*R) * (*R) * Pr +
+      (*G) * (*G) * Pg +
+      (*B) * (*B) * Pb);
+
+  *R = P + ((*R) - P) * change;
+  *G = P + ((*G) - P) * change;
+  *B = P + ((*B) - P) * change;
+}
 
 int width_shrunk;
 int height_shrunk;
@@ -58,7 +67,8 @@ int main(void)
       &width, &height, &original_channels, 3);
   width_shrunk = width;   // this is because uhhhh idk
   height_shrunk = height; // no actually this is so that we can shrink them with the algorithm (or whatever the fuck you call it) below
-  if (size <= 0) {
+  if (size <= 0)
+  {
     size = 40;
   }
   while (width_shrunk > size && height_shrunk > size)
@@ -92,7 +102,15 @@ int main(void)
       changeSaturation(&r, &g, &b, 1.5);
       brightness = ((r * 0.2126) + (g * 0.7152) + (b * 0.0722)); // basically the entire ascii thing, so like till one y is done it keeps doing the x axis so like imagine (0,0) so it will keep increasing x by one until width is reached then it increases y by one and resets x. also it prints every pixel with a character based of brightness using luma formula
       index = (int)((brightness * (num_char - 1)) / 255);
-      printf("%c", ASCIIMAP[index]);
+      if (color == 1) //checks if colour was toggled on or off
+      {
+        printf("\033[38;2;%d;%d;%dm%c\033[0m", (int)r, (int)g, (int)b, ASCIIMAP[index]);
+
+      }
+      else
+      {
+        printf("%c", ASCIIMAP[index]);
+      }
       x++;
       i++;
     }
