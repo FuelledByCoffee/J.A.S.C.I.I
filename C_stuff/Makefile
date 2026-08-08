@@ -16,7 +16,7 @@ ifneq ($(findstring emcc,$(CC)),)
          -sALLOW_MEMORY_GROWTH=1 \
          -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap
 else
-	target = asciipng
+	target = asciiart
 endif
 
 .PHONY: all
