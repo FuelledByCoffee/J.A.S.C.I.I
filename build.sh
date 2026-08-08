@@ -1,8 +1,8 @@
 #!/bin/bash
 cd C_stuff/
-curl -O https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
-curl -O https://github.com/nothings/stb/blob/master/stb_image_resize2.h
-curl -O https://github.com/nothings/stb/blob/master/stb_image_write.h
+curl -sLO https://raw.githubusercontent.com/nothings/stb/master/stb_image.h
+curl -sLO https://raw.githubusercontent.com/nothings/stb/master/stb_image_resize2.h
+curl -sLO https://raw.githubusercontent.com/nothings/stb/master/stb_image_write.h
 git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk 
 ./emsdk install latest
