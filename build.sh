@@ -26,5 +26,3 @@ npm install ejs
 npm install
 curl -L https://unpkg.com/@tailwindcss/browser@4 -o scripts/tailwind-browser.js
 
-echo "Go to http://localhost:6969/ <-- yes 6969 very funni number :)"
-node scripts/server.js
