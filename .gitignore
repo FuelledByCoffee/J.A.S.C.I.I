@@ -5,3 +5,6 @@
 node_modules
 /frontend/a.out*
 package-lock.json
+C_stuff/stb_image_write.h
+C_stuff/stb_image_resize2.h
+C_stuff/stb_image.h
