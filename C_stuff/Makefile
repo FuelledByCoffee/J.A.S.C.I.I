@@ -7,19 +7,31 @@ objects = $(sources:=.o)
 
 config ?= debug
 
+ifneq ($(findstring emcc,$(CC)),)
+	target = a.out.js
+	config = release
+	LDFLAGS += -O3 \
+         -sINVOKE_RUN=0 \
+         -sEXIT_RUNTIME=0 \
+         -sALLOW_MEMORY_GROWTH=1 \
+         -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap
+else
+	target = asciipng
+endif
+
 .PHONY: all
 all: $(config)
 
 .PHONY: debug
 debug: CFLAGS += -g -fsanitize=undefined,address
-debug: ascii
+debug: $(target)
 
 .PHONY: release
 release: CFLAGS += -O2
 release: CPPFLAGS += -DNDEBUG
-release: ascii
+release: $(target)
 
-ascii: $(objects)
+$(target): $(objects)
 	$(LINK.c) $^ -o $@ $(LDLIBS)
 
 %.c.o: %.c
