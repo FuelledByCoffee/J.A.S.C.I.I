@@ -39,12 +39,12 @@ $(target): $(objects)
 
 .PHONY: test
 test: all
-	./ascii googoo.png
-	./ascii horse.png
-	./ascii blossom.png
-	./ascii flower.png
-	./ascii spider.png
-	./ascii avatar.png
+	./$(target) googoo.png
+	./$(target) horse.png
+	./$(target) blossom.png
+	./$(target) flower.png
+	./$(target) spider.png
+	./$(target) avatar.png
 
 .PHONY: clean
 clean:
