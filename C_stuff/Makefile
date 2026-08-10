@@ -10,13 +10,17 @@ config ?= debug
 ifneq ($(findstring emcc,$(CC)),)
 	target = a.out.js
 	config = release
-	LDFLAGS += -O3 \
+	objects = $(sources:%.c=%.c.js.o)
+	obj_pattern = %.c.js.o
+	CFLAGS += -O3
+	LDFLAGS += \
          -sINVOKE_RUN=0 \
          -sEXIT_RUNTIME=0 \
          -sALLOW_MEMORY_GROWTH=1 \
          -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap
 else
 	target = asciiart
+	obj_pattern = %.c.o
 endif
 
 .PHONY: all
@@ -34,7 +38,7 @@ release: $(target)
 $(target): $(objects)
 	$(LINK.c) $^ -o $@ $(LDLIBS)
 
-%.c.o: %.c
+$(obj_pattern): %.c
 	$(COMPILE.c) $< -o $@
 
 .PHONY: test
