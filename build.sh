@@ -6,7 +6,7 @@ mkdir -p C_stuff/external frontend/scripts
 curl -sL https://raw.githubusercontent.com/nothings/stb/master/stb_image.h -o C_stuff/external/stb_image.h
 curl -sL https://raw.githubusercontent.com/nothings/stb/master/stb_image_resize2.h -o C_stuff/external/stb_image_resize2.h
 
-git clone https://github.com/emscripten-core/emsdk.git
+git submodule update --init --recursive
 
 cd emsdk
 ./emsdk install latest
