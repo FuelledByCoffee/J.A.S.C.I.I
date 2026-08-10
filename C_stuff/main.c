@@ -119,7 +119,8 @@ int main(int argc, char **argv)
 EMSCRIPTEN_KEEPALIVE
 int image_width()
 {
-	return width_shrunk; }
+	return width_shrunk;
+}
 
 EMSCRIPTEN_KEEPALIVE
 int image_height()
