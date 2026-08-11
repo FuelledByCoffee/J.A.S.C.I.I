@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 #ifdef __EMSCRIPTEN__
 	#include <emscripten.h>
 #else
@@ -47,13 +48,40 @@ void changeSaturation(double *R, double *G, double *B, double change)
 int width_shrunk;
 int height_shrunk;
 
+static struct option long_options[] = {
+		{"version",       no_argument, NULL, 'v'},
+		{  "image", required_argument, NULL, 'i'},
+		{  "color",       no_argument, NULL, 'c'},
+		{   "size", required_argument, NULL, 's'},
+		{     NULL,				 0, NULL,   0}
+};
+
 int main(int argc, char **argv)
 {
+	int         opt        = 0;
+	int         opt_index  = 0;
+	const char *image_path = argv[1];
+	while ((opt = getopt_long(argc, argv, "i:cs:", long_options, &opt_index))
+	       != -1)
+	{
+		switch (opt) {
+		case 'c': color = 1; break;
+		case 'i': 
+				image_path = optarg;
+				break;
+		case 's': 
+				size = atol(optarg);
+				break;
+		case '?':
+				exit(1);
+				break;
+		}
+	}
+	if (!image_path) errx(1, "Missing image_path");
+
 	// i stole this online
 	const char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
 	const int  num_char   = sizeof ASCIIMAP - 1;
-
-	const char *image_path = (argc > 1) ? argv[1] : "googoo.png";
 
 	// ah yes, initialising some *kewl* variables :)
 	int      width, height, original_channels;
