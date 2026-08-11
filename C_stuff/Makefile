@@ -27,7 +27,7 @@ endif
 all: $(config)
 
 .PHONY: debug
-debug: CFLAGS += -g -fsanitize=undefined,address
+debug: CFLAGS += -g -fsanitize=undefined,address -fno-sanitize=alignment
 debug: $(target)
 
 .PHONY: release
@@ -43,12 +43,7 @@ $(obj_pattern): %.c
 
 .PHONY: test
 test: all
-	./$(target) googoo.png
-	./$(target) horse.png
-	./$(target) blossom.png
-	./$(target) flower.png
-	./$(target) spider.png
-	./$(target) avatar.png
+	./$(target) ../assets/hornet.jpg
 
 .PHONY: clean
 clean:
