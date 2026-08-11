@@ -14,3 +14,5 @@ frontend/scripts/tailwind-browser.js
 frontend/node_modules
 frontend/a.out.js
 frontend/a.out.wasm
+C_stuff/stb_impl.c.js.o
+.vscode/tasks.json
