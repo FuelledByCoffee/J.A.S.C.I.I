@@ -17,7 +17,7 @@ ifneq ($(findstring emcc,$(CC)),)
          -sINVOKE_RUN=0 \
          -sEXIT_RUNTIME=0 \
          -sALLOW_MEMORY_GROWTH=1 \
-         -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap
+         -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap,ccall
 else
 	target = asciiart
 	obj_pattern = %.c.o

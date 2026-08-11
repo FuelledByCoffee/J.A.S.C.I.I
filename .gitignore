@@ -16,3 +16,6 @@ frontend/a.out.js
 frontend/a.out.wasm
 C_stuff/stb_impl.c.js.o
 .vscode/tasks.json
+C_stuff/main.c.o
+C_stuff/stb_impl.c.o
+C_stuff/main.c.js.o

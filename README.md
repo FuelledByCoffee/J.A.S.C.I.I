@@ -18,7 +18,7 @@ umm because:
 2. Simply upload the picture. (Note: Only `.jpg`, `.jpeg`, and `.png`formats are allowed)
 3. Ta-da! There you have it.
 4. Use the reset button to convert another image to ASCII.
-> NOTE: You Can Download The Repository And Run `build.sh` && `node scripts/server.js` So That You Can Have A Working Version Of The Website At http://localhost:6969/ (funni number :P )
+> NOTE: You Can Download The Repository And Run `build.sh` && `node frontend/scripts/server.js` So That You Can Have A Working Version Of The Website At http://localhost:6969/ (funni number :P )
 
 ## Some Examples
 A Good Boy <br>

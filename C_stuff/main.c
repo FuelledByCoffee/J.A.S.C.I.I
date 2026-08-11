@@ -11,8 +11,8 @@
 #else
 	#define EMSCRIPTEN_KEEPALIVE
 #endif
-#include "stb_image.h"
-#include "stb_image_resize2.h"
+#include "external/stb_image.h"
+#include "external/stb_image_resize2.h"
 
 #define Pr .299
 #define Pg .587
@@ -53,6 +53,7 @@ static struct option long_options[] = {
 		{  "image", required_argument, NULL, 'i'},
 		{  "color",       no_argument, NULL, 'c'},
 		{   "size", required_argument, NULL, 's'},
+		{		"help", 			no_argument, NULL, 'h'},
 		{     NULL,				 0, NULL,   0}
 };
 
@@ -60,25 +61,25 @@ int main(int argc, char **argv)
 {
 	int         opt        = 0;
 	int         opt_index  = 0;
-	const char *image_path = argv[1];
-	while ((opt = getopt_long(argc, argv, "i:cs:", long_options, &opt_index))
-	       != -1)
-	{
-		switch (opt) {
-		case 'c': color = 1; break;
-		case 'i': 
-				image_path = optarg;
-				break;
-		case 's': 
-				size = atol(optarg);
-				break;
-		case '?':
-				exit(1);
-				break;
-		}
-	}
-	if (!image_path) errx(1, "Missing image_path");
+	const char *image_path = "googoo.png";
 
+if (argc > 1) {
+    if (strcmp(argv[1], "-h") == 0) {
+        printf("./ascii <file location> <color (1 for yes, 0 for no)> <size>\n");
+        exit(0);
+    }
+    image_path = argv[1];
+}
+
+if (argc > 2) {
+    color = atoi(argv[2]);
+    if (color < 0 || color > 1) exit(1); // Color must be 0 or 1
+}
+
+if (argc > 3) {
+    size = atoi(argv[3]);
+    if (size <= 0) exit(1); // Size must be a valid positive number
+}
 	// i stole this online
 	const char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
 	const int  num_char   = sizeof ASCIIMAP - 1;
@@ -95,7 +96,7 @@ int main(int argc, char **argv)
 	width_shrunk              = (int)(width * scale_factor * 2);
 	height_shrunk             = (int)(height * scale_factor);
 
-	stbi_uc *map = malloc(size * size * 2 * 3);
+	stbi_uc *map = malloc(width_shrunk * height_shrunk * 3);
 	// stbir_resize_uint8_srgb(img, width, height, 0, map, width_shrunk,
 	// height_shrunk, 0, STBIR_RGB); // stb the goat
 	stbir_resize(img, width, height, 0, map, width_shrunk, height_shrunk, 0,
