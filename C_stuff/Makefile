@@ -43,7 +43,8 @@ $(obj_pattern): %.c
 
 .PHONY: test
 test: all
-	./$(target) ../assets/hornet.jpg
+	./$(target) -i ../assets/hornet.jpg
+	./$(target) -i ../assets/hornet.jpg -c
 
 .PHONY: clean
 clean:

@@ -95,16 +95,16 @@
       const cb = document.querySelector('#accept');
       const cc = document.querySelector('#color');
       if (!cb.checked) {
-        Module.ccall('get_size', null, ['number'], [40]);   //high resolution mode off
+        Module.ccall('set_size', null, ['number'], [40]);   //high resolution mode off
         term.options.fontSize = 16;
       } else {
-        Module.ccall('get_size', null, ['number'], [150]);  //high resolution mode on
+        Module.ccall('set_size', null, ['number'], [150]);  //high resolution mode on
         term.options.fontSize = 5;
       }
       if (!cc.checked) {
-        Module.ccall('color_set', null, ['number'], [0]); //Colour OFF
+        Module.ccall('set_color', null, ['number'], [0]); //Colour OFF
       } else {
-        Module.ccall('color_set', null, ['number'], [1]); //Colour ON
+        Module.ccall('set_color', null, ['number'], [1]); //Colour ON
       }
     }
     document.getElementById("Image-input").addEventListener("change", async (e) => {    // yup line 110-121 is mostly llm generated i am sorry :(
@@ -114,7 +114,7 @@
       updateSizeFromToggle();
       const buffer = await file.arrayBuffer();
       Module.FS.writeFile("googoo.png", new Uint8Array(buffer));  //it takes the binary data of the image you upload and makes a new file with that binary data named as "googoo.png"
-      Module.callMain();
+      Module.callMain(["googoo.png"]);  //calls the main function of the wasm file and passes the name of the image file as an argument
       const getWidth = Module.cwrap('image_width', 'number', []);
       const getHeight = Module.cwrap('image_height', 'number', []);
       term.resize(getWidth() + 10, getHeight() + 10);
