@@ -44,11 +44,11 @@ const struct option long_options[] = {
 };
 
 int main(int argc, char **argv) {
-	int         opt = 0;
+	int         opt        = 0;
 	const char *image_path = argv[1];
 	while ((opt = getopt(argc, argv, "vi:cs:h")) != -1) {
 		switch (opt) {
-			case 'c': color = 1;           break;
+			case 'c': color = 1; break;
 			case 'i': image_path = optarg; break;
 			case 's': size = atoi(optarg); break;
 			default: break;
