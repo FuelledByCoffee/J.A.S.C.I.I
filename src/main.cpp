@@ -1,6 +1,5 @@
 #include <err.h>
 #include <getopt.h>
-#include <stdlib.h>
 #include <unistd.h>
 
 #include <cmath>
@@ -30,9 +29,9 @@ static int color = false;
 // -----------------------------------------------------------------------------
 // stole this code from here: https://alienryderflex.com/saturation.html
 static constexpr void changeSaturation(pixel &p, double change) {
-	const double Pr = .299;
-	const double Pg = .587;
-	const double Pb = .114;
+	constexpr double Pr = .299;
+	constexpr double Pg = .587;
+	constexpr double Pb = .114;
 
 	u8 R = p.red;
 	u8 G = p.green;
@@ -48,7 +47,7 @@ static constexpr void changeSaturation(pixel &p, double change) {
 }
 
 // -----------------------------------------------------------------------------
-static const struct option long_options[] = {
+static constexpr struct option long_options[] = {
 		{"version",       no_argument, NULL, 'v'},
 		{  "image", required_argument, NULL, 'i'},
 		{  "color",       no_argument, NULL, 'c'},
@@ -71,8 +70,8 @@ int main(int argc, char **argv) {
 	}
 	if (optind < argc) image_path = argv[optind];
 
-	const char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
-	const int  num_char   = sizeof ASCIIMAP - 1;
+	constexpr char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
+	constexpr int  num_char   = sizeof ASCIIMAP - 1;
 
 	int      width, height, original_channels; // NOLINT
 	stbi_uc *img = stbi_load(image_path, &width, &height, &original_channels, 3);
@@ -112,11 +111,13 @@ int main(int argc, char **argv) {
 	delete[] img;
 }
 
+extern "C" {
 // -----------------------------------------------------------------------------
 // this is to give the data to emscripten so that it can resize the div
 EMSCRIPTEN_KEEPALIVE int  image_width() { return width_shrunk; }
 EMSCRIPTEN_KEEPALIVE int  image_height() { return height_shrunk; }
 EMSCRIPTEN_KEEPALIVE void set_size(int a) { size = a; }
 EMSCRIPTEN_KEEPALIVE void set_color(int z) { color = z; }
+}
 
 // vim: ts=2
