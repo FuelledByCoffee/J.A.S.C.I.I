@@ -60,8 +60,6 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	image_path = image_path ? image_path : "googoo.png";
-
 	const char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
 	const int  num_char   = sizeof ASCIIMAP - 1;
 
