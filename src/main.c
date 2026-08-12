@@ -45,17 +45,13 @@ const struct option long_options[] = {
 
 int main(int argc, char **argv) {
 	int         opt = 0;
-	// int         opt_index  = 0;
 	const char *image_path = argv[1];
 	while ((opt = getopt(argc, argv, "vi:cs:h")) != -1) {
 		switch (opt) {
-		case 'c':
-			color = 1;
-			// Both --color and -c are handled here
-			break;
-		case 'i': image_path = optarg; break;
-		case 's': size = atoi(optarg); break;
-		default: break;
+			case 'c': color = 1;           break;
+			case 'i': image_path = optarg; break;
+			case 's': size = atoi(optarg); break;
+			default: break;
 		}
 	}
 
@@ -101,8 +97,8 @@ int main(int argc, char **argv) {
 				b = 0;
 			}
 
-			double brightness = r * 0.2126 + g * 0.7152 + b * 0.0722;
-			int    index      = (int)((brightness * (num_char - 1)) / 255);
+			const double brightness = r * 0.2126 + g * 0.7152 + b * 0.0722;
+			const int    index      = (int)((brightness * (num_char - 1)) / 255);
 			if (color) // checks if colour was toggled on or off
 			{
 				printf("\033[38;2;%d;%d;%dm%c\033[0m", (int)r, (int)g, (int)b,
@@ -115,7 +111,7 @@ int main(int argc, char **argv) {
 		printf("\n");
 	}
 	free(map);
-	free(img); // no ram hogging in here :D
+	free(img);
 }
 
 // this is to give the data to emscripten so that it can resize the div
