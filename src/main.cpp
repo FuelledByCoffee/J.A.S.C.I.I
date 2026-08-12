@@ -41,9 +41,9 @@ static constexpr void changeSaturation(pixel &p, double change) {
 	                      G * G * Pg + //
 	                      B * B * Pb);
 
-	p.red   = fmin(fabs(P + ((R)-P) * change), 255);
-	p.green = fmin(fabs(P + ((G)-P) * change), 255);
-	p.blue  = fmin(fabs(P + ((B)-P) * change), 255);
+	p.red   = std::fmin(std::fabs(P + ((R)-P) * change), 255);
+	p.green = std::fmin(std::fabs(P + ((G)-P) * change), 255);
+	p.blue  = std::fmin(std::fabs(P + ((B)-P) * change), 255);
 }
 
 // -----------------------------------------------------------------------------
@@ -81,15 +81,15 @@ int main(int argc, char **argv) {
 	width_shrunk              = (int)(width * scale_factor * 2);
 	height_shrunk             = (int)(height * scale_factor);
 
-	stbi_uc *map = new stbi_uc[sizeof(pixel) * width_shrunk * height_shrunk];
+	pixel *map = new pixel[width_shrunk * height_shrunk];
 	stbir_resize(img, width, height, 0, map, width_shrunk, height_shrunk, 0,
 	             STBIR_RGB, STBIR_TYPE_UINT8, STBIR_EDGE_ZERO,
 	             STBIR_FILTER_BOX); // stb the goat
 
 	for (int y = 0; y != height_shrunk; y++) {
 		for (int x = 0; x != width_shrunk; x++) {
-			int   i = ((y * width_shrunk) + x) * 3;
-			pixel p = {map[i], map[i + 1], map[i + 2]};
+			const int i = y * width_shrunk + x;
+			pixel     p = map[i];
 			changeSaturation(p, 1.5);
 
 			const double brightness =
