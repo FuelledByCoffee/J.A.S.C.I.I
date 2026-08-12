@@ -15,6 +15,7 @@ source ./emsdk_env.sh
 cd ../C_stuff
 
 emmake make -j
+# emmake make -j target=a.out.js config=release LDFLAGS="-sINVOKE_RUN=0  -sEXIT_RUNTIME=0  -sALLOW_MEMORY_GROWTH=1  -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap,ccall"
 
 mv a.out.js ../frontend/scripts
 mv a.out.wasm ../frontend/scripts
