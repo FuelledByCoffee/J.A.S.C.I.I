@@ -1,5 +1,6 @@
 #include <err.h>
 #include <getopt.h>
+#include <memory>
 #include <unistd.h>
 
 #include <cmath>
@@ -73,17 +74,19 @@ int main(int argc, char **argv) {
 	constexpr char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
 	constexpr int  num_char   = sizeof ASCIIMAP - 1;
 
-	int      width, height, original_channels; // NOLINT
-	stbi_uc *img = stbi_load(image_path, &width, &height, &original_channels, 3);
+	int                    width, height, original_channels; // NOLINT
+	std::unique_ptr<pixel> img{reinterpret_cast<pixel *>(
+			stbi_load(image_path, &width, &height, &original_channels, 3))};
 	if (!img) errx(1, "Failed to load image %s", image_path);
 
 	const double scale_factor = size / fmax(height, width);
 	width_shrunk              = (int)(width * scale_factor * 2);
 	height_shrunk             = (int)(height * scale_factor);
 
-	pixel *map = new pixel[width_shrunk * height_shrunk];
-	stbir_resize(img, width, height, 0, map, width_shrunk, height_shrunk, 0,
-	             STBIR_RGB, STBIR_TYPE_UINT8, STBIR_EDGE_ZERO,
+
+	auto map = std::make_unique<pixel[]>(width_shrunk * height_shrunk);
+	stbir_resize(img.get(), width, height, 0, map.get(), width_shrunk,
+	             height_shrunk, 0, STBIR_RGB, STBIR_TYPE_UINT8, STBIR_EDGE_ZERO,
 	             STBIR_FILTER_BOX); // stb the goat
 
 	for (int y = 0; y != height_shrunk; y++) {
@@ -92,8 +95,9 @@ int main(int argc, char **argv) {
 			pixel     p = map[i];
 			changeSaturation(p, 1.5);
 
-			const double brightness =
-					p.red * 0.2126 + p.green * 0.7152 + p.blue * 0.0722;
+			const double brightness = p.red * 0.2126 +   //
+			                          p.green * 0.7152 + //
+			                          p.blue * 0.0722;
 			const int index = brightness * (num_char - 1) / 255;
 			if (color)
 
@@ -107,8 +111,6 @@ int main(int argc, char **argv) {
 
 		std::cout << std::endl;
 	}
-	delete[] map;
-	delete[] img;
 }
 
 extern "C" {
