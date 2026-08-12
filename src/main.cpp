@@ -1,13 +1,10 @@
 #include <err.h>
 #include <getopt.h>
-#include <math.h>
-#include <ostream>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <cmath>
+#include <cstdint>
 #include <iostream>
 #ifdef __EMSCRIPTEN__
 	#include <emscripten.h>
@@ -17,7 +14,7 @@
 #include <stb_image.h>
 #include <stb_image_resize2.h>
 
-typedef uint8_t u8;
+using u8 = std::uint8_t;
 
 struct pixel {
 	u8 red;
@@ -32,7 +29,7 @@ static int color = false;
 
 // -----------------------------------------------------------------------------
 // stole this code from here: https://alienryderflex.com/saturation.html
-static void changeSaturation(pixel &p, double change) {
+static constexpr void changeSaturation(pixel &p, double change) {
 	const double Pr = .299;
 	const double Pg = .587;
 	const double Pb = .114;
@@ -108,9 +105,9 @@ int main(int argc, char **argv) {
 									<< ASCIIMAP[index] << "\033[0m";
 			else std::cout << ASCIIMAP[index];
 		}
-		putchar('\n');
+
+		std::cout << std::endl;
 	}
-	std::cout << std::flush;
 	delete[] map;
 	delete[] img;
 }
