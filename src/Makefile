@@ -1,8 +1,11 @@
 CPPFLAGS += -isystem external
-CFLAGS   += -Wall -Wextra -Wshadow
 LDFLAGS  += -lm
 
-sources = $(wildcard *.c)
+warnings += -Wall -Wextra -Wshadow
+CFLAGS   += $(warnings)
+CXXFLAGS += $(warnings)
+
+sources = $(wildcard *.c *.cpp)
 objects = $(sources:=.o)
 
 config ?= debug
@@ -10,9 +13,9 @@ config ?= debug
 ifneq ($(findstring emcc,$(CC)),)
 	target = a.out.js
 	config = release
-	objects = $(sources:%.c=%.c.js.o)
-	obj_pattern = %.c.js.o
-	CFLAGS += -O3
+	objects = $(sources:=.js.o)
+	c_obj_pattern = %.c.js.o
+	cpp_obj_pattern = %.cpp.js.o
 	LDFLAGS += \
          -sINVOKE_RUN=0 \
          -sEXIT_RUNTIME=0 \
@@ -20,7 +23,8 @@ ifneq ($(findstring emcc,$(CC)),)
          -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap,ccall
 else
 	target = asciiart
-	obj_pattern = %.c.o
+	c_obj_pattern = %.c.o
+	cpp_obj_pattern = %.cpp.o
 endif
 
 .PHONY: all
@@ -28,18 +32,23 @@ all: $(config)
 
 .PHONY: debug
 debug: CFLAGS += -g -fsanitize=undefined,address -fno-sanitize=alignment
+debug: CXXFLAGS += -g -fsanitize=undefined,address -fno-sanitize=alignment
 debug: $(target)
 
 .PHONY: release
 release: CFLAGS += -O2
+release: CXXFLAGS += -O2
 release: CPPFLAGS += -DNDEBUG
 release: $(target)
 
 $(target): $(objects)
-	$(LINK.c) $^ -o $@ $(LDLIBS)
+	$(LINK.cc) $^ -o $@ $(LDLIBS)
 
-$(objects): $(obj_pattern): %.c
+$(c_obj_pattern): %.c
 	$(COMPILE.c) $< -o $@
+
+$(cpp_obj_pattern): %.cpp
+	$(COMPILE.cc) $< -o $@
 
 .PHONY: test
 test: all
