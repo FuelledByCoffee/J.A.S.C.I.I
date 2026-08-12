@@ -16,6 +16,12 @@
 
 typedef uint8_t u8;
 
+typedef struct {
+	u8 red;
+	u8 green;
+	u8 blue;
+} pixel;
+
 static int width_shrunk;
 static int height_shrunk;
 static int size  = 60;
@@ -23,18 +29,22 @@ static int color = false;
 
 // -----------------------------------------------------------------------------
 // stole this code from here: https://alienryderflex.com/saturation.html
-static void changeSaturation(u8 *R, u8 *G, u8 *B, double change) {
+static void changeSaturation(pixel *p, double change) {
 	const double Pr = .299;
 	const double Pg = .587;
 	const double Pb = .114;
 
-	const double P = sqrt((*R) * (*R) * Pr + //
-	                      (*G) * (*G) * Pg + //
-	                      (*B) * (*B) * Pb);
+	u8 R = p->red;
+	u8 G = p->green;
+	u8 B = p->blue;
 
-	*R = fmin(fabs(P + ((*R) - P) * change), 255);
-	*G = fmin(fabs(P + ((*G) - P) * change), 255);
-	*B = fmin(fabs(P + ((*B) - P) * change), 255);
+	const double P = sqrt(R * R * Pr + //
+	                      G * G * Pg + //
+	                      B * B * Pb);
+
+	p->red   = fmin(fabs(P + ((R)-P) * change), 255);
+	p->green = fmin(fabs(P + ((G)-P) * change), 255);
+	p->blue  = fmin(fabs(P + ((B)-P) * change), 255);
 }
 
 // -----------------------------------------------------------------------------
@@ -79,16 +89,16 @@ int main(int argc, char **argv) {
 
 	for (int y = 0; y != height_shrunk; y++) {
 		for (int x = 0; x != width_shrunk; x++) {
-			int i = ((y * width_shrunk) + x) * 3;
-			u8  r = map[i + 0];
-			u8  g = map[i + 1];
-			u8  b = map[i + 2];
-			changeSaturation(&r, &g, &b, 1.5);
+			int   i = ((y * width_shrunk) + x) * 3;
+			pixel p = {map[i], map[i + 1], map[i + 2]};
+			changeSaturation(&p, 1.5);
 
-			const double brightness = r * 0.2126 + g * 0.7152 + b * 0.0722;
-			const int    index      = brightness * (num_char - 1) / 255;
+			const double brightness =
+					p.red * 0.2126 + p.green * 0.7152 + p.blue * 0.0722;
+			const int index = brightness * (num_char - 1) / 255;
 			if (color)
-				printf("\033[38;2;%d;%d;%dm%c\033[0m", r, g, b, ASCIIMAP[index]);
+				printf("\033[38;2;%d;%d;%dm%c\033[0m", p.red, p.green, p.blue,
+				       ASCIIMAP[index]);
 			else putchar(ASCIIMAP[index]);
 		}
 		putchar('\n');
