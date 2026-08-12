@@ -34,7 +34,7 @@ static void changeSaturation(unsigned *R, unsigned *G, unsigned *B,
 	*B = P + ((*B) - P) * change;
 }
 
-const struct option long_options[] = {
+static const struct option long_options[] = {
 		{"version",       no_argument, NULL, 'v'},
 		{  "image", required_argument, NULL, 'i'},
 		{  "color",       no_argument, NULL, 'c'},
@@ -46,7 +46,7 @@ const struct option long_options[] = {
 int main(int argc, char **argv) {
 	int         opt        = 0;
 	const char *image_path = argv[1];
-	while ((opt = getopt(argc, argv, "vi:cs:h")) != -1) {
+	while ((opt = getopt_long(argc, argv, "vi:cs:h", long_options, NULL)) != -1) {
 		switch (opt) {
 			case 'c': color = 1; break;
 			case 'i': image_path = optarg; break;
@@ -54,6 +54,7 @@ int main(int argc, char **argv) {
 			default: break;
 		}
 	}
+	if (optind < argc) image_path = argv[optind];
 
 	const char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
 	const int  num_char   = sizeof ASCIIMAP - 1;
@@ -79,34 +80,15 @@ int main(int argc, char **argv) {
 			unsigned b = map[i + 2];
 			changeSaturation(&r, &g, &b, 1.5);
 
-			// what if change saturation causes some weird shit, this is to fix
-			// that
-			if (r > 255) {
-				r = 255;
-			} else if (r < 0) {
-				r = 0;
-			}
-			if (g > 255) {
-				g = 255;
-			} else if (g < 0) {
-				g = 0;
-			}
-			if (b > 255) {
-				b = 255;
-			} else if (b < 0) {
-				b = 0;
-			}
+			if (r > 255) r = 255;
+			if (g > 255) g = 255;
+			if (b > 255) b = 255;
 
 			const double brightness = r * 0.2126 + g * 0.7152 + b * 0.0722;
-			const int    index      = (int)((brightness * (num_char - 1)) / 255);
-			if (color) // checks if colour was toggled on or off
-			{
-				printf("\033[38;2;%d;%d;%dm%c\033[0m", (int)r, (int)g, (int)b,
-				       ASCIIMAP[index]);
-
-			} else {
-				printf("%c", ASCIIMAP[index]);
-			}
+			const int    index      = brightness * (num_char - 1) / 255;
+			if (color)
+				printf("\033[38;2;%d;%d;%dm%c\033[0m", r, g, b, ASCIIMAP[index]);
+			else printf("%c", ASCIIMAP[index]);
 		}
 		printf("\n");
 	}
@@ -120,5 +102,4 @@ EMSCRIPTEN_KEEPALIVE int  image_height() { return height_shrunk; }
 EMSCRIPTEN_KEEPALIVE void set_size(int a) { size = a; }
 EMSCRIPTEN_KEEPALIVE void set_color(int z) { color = z; }
 
-// i hope you did not find my comments annoying, jassi out :)
 // vim: ts=2
