@@ -38,7 +38,7 @@ release: $(target)
 $(target): $(objects)
 	$(LINK.c) $^ -o $@ $(LDLIBS)
 
-$(obj_pattern): %.c
+$(objects): $(obj_pattern): %.c
 	$(COMPILE.c) $< -o $@
 
 .PHONY: test
