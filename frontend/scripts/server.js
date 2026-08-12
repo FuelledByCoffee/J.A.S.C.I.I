@@ -10,8 +10,6 @@ app.set('view engine', 'html');
 
 app.use(express.static(frontendDir));
 
-app.get("/", (req, res) => {
-  res.render('index')
-})
+app.get('/', (req, res) => {res.render('index')})
 
 app.listen(6969)
