@@ -29,22 +29,23 @@ static int color = false;
 
 // -----------------------------------------------------------------------------
 // stole this code from here: https://alienryderflex.com/saturation.html
-static void changeSaturation(pixel *p, double change) {
+static pixel changeSaturation(pixel p, double change) {
 	const double Pr = .299;
 	const double Pg = .587;
 	const double Pb = .114;
 
-	u8 R = p->red;
-	u8 G = p->green;
-	u8 B = p->blue;
+	u8 R = p.red;
+	u8 G = p.green;
+	u8 B = p.blue;
 
 	const double P = sqrt(R * R * Pr + //
 	                      G * G * Pg + //
 	                      B * B * Pb);
 
-	p->red   = fmin(fabs(P + ((R)-P) * change), 255);
-	p->green = fmin(fabs(P + ((G)-P) * change), 255);
-	p->blue  = fmin(fabs(P + ((B)-P) * change), 255);
+	p.red   = fmin(fabs(P + ((R)-P) * change), 255);
+	p.green = fmin(fabs(P + ((G)-P) * change), 255);
+	p.blue  = fmin(fabs(P + ((B)-P) * change), 255);
+	return p;
 }
 
 // -----------------------------------------------------------------------------
@@ -82,19 +83,19 @@ int main(int argc, char **argv) {
 	width_shrunk              = (int)(width * scale_factor * 2);
 	height_shrunk             = (int)(height * scale_factor);
 
-	stbi_uc *map = malloc((long)width_shrunk * height_shrunk * 3UL);
+	pixel *map = malloc(sizeof(pixel) * width_shrunk * height_shrunk);
 	stbir_resize(img, width, height, 0, map, width_shrunk, height_shrunk, 0,
 	             STBIR_RGB, STBIR_TYPE_UINT8, STBIR_EDGE_ZERO,
 	             STBIR_FILTER_BOX); // stb the goat
 
 	for (int y = 0; y != height_shrunk; y++) {
 		for (int x = 0; x != width_shrunk; x++) {
-			int   i = ((y * width_shrunk) + x) * 3;
-			pixel p = {map[i], map[i + 1], map[i + 2]};
-			changeSaturation(&p, 1.5);
+			const int   i = y * width_shrunk + x;
+			const pixel p = changeSaturation(map[i], 1.5);
 
-			const double brightness =
-					p.red * 0.2126 + p.green * 0.7152 + p.blue * 0.0722;
+			const double brightness = p.red * 0.2126 +   //
+			                          p.green * 0.7152 + //
+			                          p.blue * 0.0722;
 			const int index = brightness * (num_char - 1) / 255;
 			if (color)
 				printf("\033[38;2;%d;%d;%dm%c\033[0m", p.red, p.green, p.blue,
