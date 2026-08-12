@@ -53,15 +53,17 @@ static auto load_image(std::string_view image_path) {
 	int                      width, height, original_channels; // NOLINT
 	std::unique_ptr<stbi_uc> img{
 			stbi_load(image_path.data(), &width, &height, &original_channels, 3)};
+
 	if (!img) errx(2, "Failed to load image %s", image_path.data());
 
 	const double scale_factor = size / std::fmax(height, width);
-	width_shrunk            = width * scale_factor * 2; // Thanks bolt!
-	height_shrunk           = height * scale_factor;
+	width_shrunk              = width * scale_factor * 2; // Thanks bolt!
+	height_shrunk             = height * scale_factor;
 
-	return std::unique_ptr<pixel>(reinterpret_cast<pixel *>(stbir_resize(
-			img.get(), width, height, 0, nullptr, width_shrunk, height_shrunk, 0,
-			STBIR_RGB, STBIR_TYPE_UINT8, STBIR_EDGE_ZERO, STBIR_FILTER_BOX)));
+	return std::unique_ptr<const pixel>(reinterpret_cast<const pixel *>(
+			stbir_resize(img.get(), width, height, 0, nullptr, width_shrunk,
+	                 height_shrunk, 0, STBIR_RGB, STBIR_TYPE_UINT8,
+	                 STBIR_EDGE_ZERO, STBIR_FILTER_BOX)));
 }
 
 // -----------------------------------------------------------------------------
