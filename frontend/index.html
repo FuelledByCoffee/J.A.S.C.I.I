@@ -113,8 +113,8 @@
       term.clear();
       updateSizeFromToggle();
       const buffer = await file.arrayBuffer();
-      Module.FS.writeFile("googoo.png", new Uint8Array(buffer));  //it takes the binary data of the image you upload and makes a new file with that binary data named as "googoo.png"
-      Module.callMain(["googoo.png"]);  //calls the main function of the wasm file and passes the name of the image file as an argument
+      Module.FS.writeFile("image_file", new Uint8Array(buffer));  //it takes the binary data of the image you upload and makes a new file with that binary data named as "googoo.png"
+      Module.callMain(["image_file"]);  //calls the main function of the wasm file and passes the name of the image file as an argument
       const getWidth = Module.cwrap('image_width', 'number', []);
       const getHeight = Module.cwrap('image_height', 'number', []);
       term.resize(getWidth() + 10, getHeight() + 10);
