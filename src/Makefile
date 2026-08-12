@@ -3,7 +3,7 @@ LDFLAGS  += -lm
 
 warnings += -Wall -Wextra -Wshadow
 CFLAGS   += $(warnings)
-CXXFLAGS += $(warnings)
+CXXFLAGS += $(warnings) -std=c++26
 
 sources = $(wildcard *.c *.cpp)
 objects = $(sources:=.o)
