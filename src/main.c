@@ -2,6 +2,7 @@
 #include <getopt.h>
 #include <math.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -13,27 +14,30 @@
 #include <stb_image.h>
 #include <stb_image_resize2.h>
 
-#define Pr .299
-#define Pg .587
-#define Pb .114
+typedef uint8_t u8;
 
 static int width_shrunk;
 static int height_shrunk;
 static int size  = 60;
 static int color = false;
 
+// -----------------------------------------------------------------------------
 // stole this code from here: https://alienryderflex.com/saturation.html
-static void changeSaturation(unsigned *R, unsigned *G, unsigned *B,
-                             double change) {
-	double P = sqrt((*R) * (*R) * Pr + //
-	                (*G) * (*G) * Pg + //
-	                (*B) * (*B) * Pb);
+static void changeSaturation(u8 *R, u8 *G, u8 *B, double change) {
+	const double Pr = .299;
+	const double Pg = .587;
+	const double Pb = .114;
 
-	*R = P + ((*R) - P) * change;
-	*G = P + ((*G) - P) * change;
-	*B = P + ((*B) - P) * change;
+	const double P = sqrt((*R) * (*R) * Pr + //
+	                      (*G) * (*G) * Pg + //
+	                      (*B) * (*B) * Pb);
+
+	*R = fmin(fabs(P + ((*R) - P) * change), 255);
+	*G = fmin(fabs(P + ((*G) - P) * change), 255);
+	*B = fmin(fabs(P + ((*B) - P) * change), 255);
 }
 
+// -----------------------------------------------------------------------------
 static const struct option long_options[] = {
 		{"version",       no_argument, NULL, 'v'},
 		{  "image", required_argument, NULL, 'i'},
@@ -43,6 +47,7 @@ static const struct option long_options[] = {
 		{		 NULL,								 0, NULL,   0}
 };
 
+// -----------------------------------------------------------------------------
 int main(int argc, char **argv) {
 	int         opt        = 0;
 	const char *image_path = argv[1];
@@ -74,28 +79,25 @@ int main(int argc, char **argv) {
 
 	for (int y = 0; y != height_shrunk; y++) {
 		for (int x = 0; x != width_shrunk; x++) {
-			int      i = ((y * width_shrunk) + x) * 3;
-			unsigned r = map[i + 0];
-			unsigned g = map[i + 1];
-			unsigned b = map[i + 2];
+			int i = ((y * width_shrunk) + x) * 3;
+			u8  r = map[i + 0];
+			u8  g = map[i + 1];
+			u8  b = map[i + 2];
 			changeSaturation(&r, &g, &b, 1.5);
-
-			if (r > 255) r = 255;
-			if (g > 255) g = 255;
-			if (b > 255) b = 255;
 
 			const double brightness = r * 0.2126 + g * 0.7152 + b * 0.0722;
 			const int    index      = brightness * (num_char - 1) / 255;
 			if (color)
 				printf("\033[38;2;%d;%d;%dm%c\033[0m", r, g, b, ASCIIMAP[index]);
-			else printf("%c", ASCIIMAP[index]);
+			else putchar(ASCIIMAP[index]);
 		}
-		printf("\n");
+		putchar('\n');
 	}
 	free(map);
 	free(img);
 }
 
+// -----------------------------------------------------------------------------
 // this is to give the data to emscripten so that it can resize the div
 EMSCRIPTEN_KEEPALIVE int  image_width() { return width_shrunk; }
 EMSCRIPTEN_KEEPALIVE int  image_height() { return height_shrunk; }
