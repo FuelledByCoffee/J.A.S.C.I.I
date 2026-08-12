@@ -117,7 +117,7 @@
       Module.callMain(["image_file"]);  //calls the main function of the wasm file and passes the name of the image file as an argument
       const getWidth = Module.cwrap('image_width', 'number', []);
       const getHeight = Module.cwrap('image_height', 'number', []);
-      term.resize(getWidth() + 10, getHeight() + 10);
+      term.resize(getWidth(), getHeight());
     });
   </script> <!--- aha, coffeescript and jquery in 2026, please dont laugh at me :c --->
   <script type="text/coffeescript">
