@@ -29,7 +29,7 @@ static int color = false;
 
 // -----------------------------------------------------------------------------
 // stole this code from here: https://alienryderflex.com/saturation.html
-static constexpr void changeSaturation(pixel &p, double change) {
+static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 	constexpr double Pr = .299;
 	constexpr double Pg = .587;
 	constexpr double Pb = .114;
@@ -45,6 +45,7 @@ static constexpr void changeSaturation(pixel &p, double change) {
 	p.red   = std::fmin(std::fabs(P + ((R)-P) * change), 255);
 	p.green = std::fmin(std::fabs(P + ((G)-P) * change), 255);
 	p.blue  = std::fmin(std::fabs(P + ((B)-P) * change), 255);
+	return p;
 }
 
 // -----------------------------------------------------------------------------
@@ -91,9 +92,8 @@ int main(int argc, char **argv) {
 
 	for (int y = 0; y != height_shrunk; y++) {
 		for (int x = 0; x != width_shrunk; x++) {
-			const int i = y * width_shrunk + x;
-			pixel     p = map[i];
-			changeSaturation(p, 1.5);
+			const int   i = y * width_shrunk + x;
+			const pixel p = changeSaturation(map[i], 1.5);
 
 			const double brightness = p.red * 0.2126 +   //
 			                          p.green * 0.7152 + //
