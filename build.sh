@@ -18,9 +18,6 @@ emmake make -j
 
 mv a.out.js ../frontend/scripts
 mv a.out.wasm ../frontend/scripts
-rm main.c.js.o
-rm stb_impl.c.js.o
-make clean
 cd ..
 
 npm install
