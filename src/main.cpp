@@ -25,8 +25,6 @@ struct pixel {
 	u8 blue;
 };
 
-using img_ptr = std::unique_ptr<pixel, decltype(&std::free)>;
-
 static int width_shrunk;
 static int height_shrunk;
 static int size  = 60;
@@ -54,19 +52,18 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 }
 
 // -----------------------------------------------------------------------------
-static auto load_image(std::string_view image_path) {
-	int     width, height, original_channels; // NOLINT
-	img_ptr img{reinterpret_cast<pixel *>(stbi_load(
-									image_path.data(), &width, &height, &original_channels, 3)),
-	            std::free};
+static auto load_image(const char *image_path) {
+	int  width, height, original_channels; // NOLINT
+	auto img = std::unique_ptr<stbi_uc, decltype(&std::free)>{
+			stbi_load(image_path, &width, &height, &original_channels, 3), std::free};
 
-	if (!img) errx(2, "Failed to load image %s", image_path.data());
+	if (!img) errx(2, "Failed to load image %s", image_path);
 
 	const double scale_factor = size / std::fmax(height, width);
 	width_shrunk              = width * scale_factor * 2; // Thanks bolt!
 	height_shrunk             = height * scale_factor;
 
-	return img_ptr(
+	return std::unique_ptr<pixel, decltype(&std::free)>(
 			reinterpret_cast<pixel *>(stbir_resize(
 					img.get(), width, height, 0, nullptr, width_shrunk, height_shrunk, 0,
 					STBIR_RGB, STBIR_TYPE_UINT8, STBIR_EDGE_ZERO, STBIR_FILTER_BOX)),
