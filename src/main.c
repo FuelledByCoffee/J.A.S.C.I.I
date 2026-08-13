@@ -79,6 +79,7 @@ static void print_ascii_art(pixel *img, int height, int width) {
 			const double brightness = p.red * 0.2126 +   //
 			                          p.green * 0.7152 + //
 			                          p.blue * 0.0722;
+
 			const int index = brightness * (num_char - 1) / 255;
 			if (color)
 				printf("\033[38;2;%d;%d;%dm%c\033[0m", p.red, p.green, p.blue,
