@@ -6,6 +6,7 @@
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <utility>
 #ifdef __EMSCRIPTEN__
 	#include <emscripten.h>
 #else
@@ -67,6 +68,30 @@ static auto load_image(std::string_view image_path) {
 }
 
 // -----------------------------------------------------------------------------
+static auto print_ascii_art(auto &&img) {
+	constexpr char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
+	constexpr int  num_char   = sizeof ASCIIMAP - 1;
+
+	for (int y = 0; y != height_shrunk; y++) {
+		for (int x = 0; x != width_shrunk; x++) {
+			const int   i = y * width_shrunk + x;
+			const pixel p = changeSaturation(img.get()[i], 1.5);
+
+			const double brightness = p.red * 0.2126 +   //
+			                          p.green * 0.7152 + //
+			                          p.blue * 0.0722;
+			const int index = brightness * (num_char - 1) / 255;
+			if (color)
+				std::cout << std::format("\033[38;2;{:d};{:d};{:d}m{}\033[0m", //
+				                         p.red, p.green, p.blue, ASCIIMAP[index]);
+			else std::cout << ASCIIMAP[index];
+		}
+
+		std::cout << std::endl;
+	}
+}
+
+// -----------------------------------------------------------------------------
 static constexpr struct option long_options[] = {
 		{"version",       no_argument, NULL, 'v'},
 		{  "image", required_argument, NULL, 'i'},
@@ -91,28 +116,8 @@ int main(int argc, char **argv) {
 	if (optind < argc) image_path = argv[optind];
 	if (!image_path) errx(1, "Need an image");
 
-	constexpr char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
-	constexpr int  num_char   = sizeof ASCIIMAP - 1;
-
 	const auto map = load_image(image_path);
-
-	for (int y = 0; y != height_shrunk; y++) {
-		for (int x = 0; x != width_shrunk; x++) {
-			const int   i = y * width_shrunk + x;
-			const pixel p = changeSaturation(map.get()[i], 1.5);
-
-			const double brightness = p.red * 0.2126 +   //
-			                          p.green * 0.7152 + //
-			                          p.blue * 0.0722;
-			const int index = brightness * (num_char - 1) / 255;
-			if (color)
-				std::cout << std::format("\033[38;2;{:d};{:d};{:d}m{}\033[0m", //
-				                         p.red, p.green, p.blue, ASCIIMAP[index]);
-			else std::cout << ASCIIMAP[index];
-		}
-
-		std::cout << std::endl;
-	}
+	print_ascii_art(std::move(map));
 }
 
 // -----------------------------------------------------------------------------
