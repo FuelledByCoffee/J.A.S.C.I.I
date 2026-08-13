@@ -1,12 +1,18 @@
 CPPFLAGS += -isystem external
 LDFLAGS  += -lm
 
+ifeq ($(CC),clang)
+	COMPILE.cc += -MJ $@.json
+	COMPILE.c += -MJ $@.json
+endif
+
 warnings += -Wall -Wextra -Wshadow
 CFLAGS   += $(warnings)
 CXXFLAGS += $(warnings) -std=c++26
 
 sources = $(wildcard *.c *.cpp)
 objects = $(sources:=.o)
+json    = $(objects:=.json)
 
 config ?= debug
 
@@ -29,6 +35,13 @@ endif
 
 .PHONY: all
 all: $(config)
+
+ifeq ($(CC),clang)
+all: compile_commands.json
+endif
+
+compile_commands.json: $(json)
+	@sed -e '1s/^/[\n/' -e '$$s/,$$/\n]/' $^ > $@
 
 .PHONY: debug
 debug: CFLAGS += -g -fsanitize=undefined,address -fno-sanitize=alignment
