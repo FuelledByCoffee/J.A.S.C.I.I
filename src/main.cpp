@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <cstdlib>
 #include <err.h>
 #include <getopt.h>
 #include <memory>
@@ -22,6 +24,8 @@ struct pixel {
 	u8 green;
 	u8 blue;
 };
+
+using img_ptr = std::unique_ptr<pixel, decltype(&std::free)>;
 
 static int width_shrunk;
 static int height_shrunk;
@@ -51,9 +55,10 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 
 // -----------------------------------------------------------------------------
 static auto load_image(std::string_view image_path) {
-	int                      width, height, original_channels; // NOLINT
-	std::unique_ptr<stbi_uc> img{
-			stbi_load(image_path.data(), &width, &height, &original_channels, 3)};
+	int     width, height, original_channels; // NOLINT
+	img_ptr img{reinterpret_cast<pixel *>(stbi_load(
+									image_path.data(), &width, &height, &original_channels, 3)),
+	            std::free};
 
 	if (!img) errx(2, "Failed to load image %s", image_path.data());
 
@@ -61,10 +66,11 @@ static auto load_image(std::string_view image_path) {
 	width_shrunk              = width * scale_factor * 2; // Thanks bolt!
 	height_shrunk             = height * scale_factor;
 
-	return std::unique_ptr<const pixel>(reinterpret_cast<const pixel *>(
-			stbir_resize(img.get(), width, height, 0, nullptr, width_shrunk,
-	                 height_shrunk, 0, STBIR_RGB, STBIR_TYPE_UINT8,
-	                 STBIR_EDGE_ZERO, STBIR_FILTER_BOX)));
+	return img_ptr(
+			reinterpret_cast<pixel *>(stbir_resize(
+					img.get(), width, height, 0, nullptr, width_shrunk, height_shrunk, 0,
+					STBIR_RGB, STBIR_TYPE_UINT8, STBIR_EDGE_ZERO, STBIR_FILTER_BOX)),
+			std::free);
 }
 
 // -----------------------------------------------------------------------------
@@ -80,14 +86,15 @@ static auto print_ascii_art(auto &&img) {
 			const double brightness = p.red * 0.2126 +   //
 			                          p.green * 0.7152 + //
 			                          p.blue * 0.0722;
-			const int index = brightness * (num_char - 1) / 255;
+
+			const unsigned index = unsigned(brightness * (num_char - 1) / 255);
 			if (color)
 				std::cout << std::format("\033[38;2;{:d};{:d};{:d}m{}\033[0m", //
 				                         p.red, p.green, p.blue, ASCIIMAP[index]);
 			else std::cout << ASCIIMAP[index];
 		}
 
-		std::cout << std::endl;
+		std::cout << '\n';
 	}
 }
 
