@@ -54,20 +54,21 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 // -----------------------------------------------------------------------------
 static auto load_image(const char *image_path) {
 	int  width, height, original_channels; // NOLINT
-	auto img = std::unique_ptr<stbi_uc, decltype(&std::free)>{
-			stbi_load(image_path, &width, &height, &original_channels, 3), std::free};
-
+	auto img = stbi_load(image_path, &width, &height, &original_channels, 3);
 	if (!img) errx(2, "Failed to load image %s", image_path);
 
 	const double scale_factor = size / std::fmax(height, width);
 	width_shrunk              = width * scale_factor * 2; // Thanks bolt!
 	height_shrunk             = height * scale_factor;
 
-	return std::unique_ptr<pixel, decltype(&std::free)>(
-			reinterpret_cast<pixel *>(stbir_resize(
-					img.get(), width, height, 0, nullptr, width_shrunk, height_shrunk, 0,
-					STBIR_RGB, STBIR_TYPE_UINT8, STBIR_EDGE_ZERO, STBIR_FILTER_BOX)),
-			std::free);
+	pixel *img_resized = (pixel *)stbir_resize(
+			img, width, height, 0, nullptr, width_shrunk, height_shrunk, 0, STBIR_RGB,
+			STBIR_TYPE_UINT8, STBIR_EDGE_ZERO, STBIR_FILTER_BOX);
+
+	stbi_image_free(img);
+
+	return std::unique_ptr<pixel, decltype(&stbi_image_free)>(img_resized,
+	                                                          stbi_image_free);
 }
 
 // -----------------------------------------------------------------------------
@@ -120,8 +121,8 @@ int main(int argc, char **argv) {
 	if (optind < argc) image_path = argv[optind];
 	if (!image_path) errx(1, "Need an image");
 
-	const auto map = load_image(image_path);
-	print_ascii_art(std::move(map));
+	const auto img = load_image(image_path);
+	print_ascii_art(std::move(img));
 }
 
 // -----------------------------------------------------------------------------
