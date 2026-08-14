@@ -42,7 +42,9 @@ struct pixel {
 template <typename pixel_type = pixel, //
           typename free_func  = decltype(&stbi_image_free)>
 struct image {
+
 	using u_ptr = std::unique_ptr<pixel_type, free_func>;
+
 	image(u8 *data, int height, int width, free_func deleter = stbi_image_free)
 		: m_data(reinterpret_cast<pixel_type *>(data), deleter), m_height(height),
 			m_width(width) {}
