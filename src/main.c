@@ -22,6 +22,12 @@ typedef struct {
 	u8 blue;
 } pixel;
 
+typedef struct {
+	pixel *data;
+	int    height;
+	int    width;
+} image;
+
 static int g_target_height;
 static int g_target_width = 90; // width
 static int g_color        = false;
@@ -55,22 +61,21 @@ static pixel changeSaturation(pixel p, double change) {
 }
 
 // -----------------------------------------------------------------------------
-static pixel *load_image(const char *image_path, int *height, int *width) {
-	int    original_channels;
-	pixel *img =
-			(pixel *)stbi_load(image_path, width, height, &original_channels, 3);
+static image load_image(const char *image_path) {
+	int original_channels, height, width; // NOLINT
+	u8 *img = stbi_load(image_path, &width, &height, &original_channels, 3);
 	if (!img) errx(1, "Failed to load image %s", image_path);
 
-	const double aspect_ratio           = (double)*height / *width;
+	const double aspect_ratio           = (double)height / width;
 	const double char_aspect_adjustment = 0.55;
 	g_target_height =
 			(int)(g_target_width * aspect_ratio * char_aspect_adjustment);
 
-	return img;
+	return (image){.data = (pixel *)img, .height = height, .width = width};
 }
 
 // -----------------------------------------------------------------------------
-static void print_ascii_art(pixel *img, int height, int width) { // NOLINT
+static void print_ascii_art(image *img) {
 	// const char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
 	const char ASCIIMAP[] = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/"
 													"\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
@@ -78,10 +83,10 @@ static void print_ascii_art(pixel *img, int height, int width) { // NOLINT
 
 	for (int y = 0; y != g_target_height; y++) {
 		for (int x = 0; x != g_target_width; x++) {
-			const int   recalc_x = (int)((double)x / g_target_width * width);
-			const int   recalc_y = (int)((double)y / g_target_height * height);
-			const int   i        = recalc_y * width + recalc_x;
-			const pixel p = changeSaturation(img[i], 1.5);
+			const int   recalc_x = (int)((double)x / g_target_width * img->width);
+			const int   recalc_y = (int)((double)y / g_target_height * img->height);
+			const int   i        = recalc_y * img->width + recalc_x;
+			const pixel p        = changeSaturation(img->data[i], 1.5);
 
 			const double brightness = 0.299 * p.red +   //
 			                          0.587 * p.green + //
@@ -122,10 +127,9 @@ int main(int argc, char **argv) {
 	if (optind < argc) image_path = argv[optind];
 	if (!image_path) errx(1, "Need image!");
 
-	int    height, width; // NOLINT
-	pixel *img = load_image(image_path, &height, &width);
-	print_ascii_art(img, height, width);
-	free(img);
+	image img = load_image(image_path);
+	print_ascii_art(&img);
+	free(img.data);
 }
 
 // vim: ts=2
