@@ -97,10 +97,10 @@ static auto make_ascii_art(auto &&img) {
 
 	for (int y = 0; y != g_target_height; y++) {
 		for (int x = 0; x != g_target_width; x++) {
-			const int   new_x = int(double(x) / g_target_width * img.m_width);
-			const int   new_y = int(double(y) / g_target_height * img.m_height);
-			const int   i     = new_y * img.m_width + new_x;
-			const pixel p     = changeSaturation(img[i], 1.5);
+			const int   column = int(double(x) / g_target_width * img.m_width);
+			const int   row    = int(double(y) / g_target_height * img.m_height);
+			const int   i      = row * img.m_width + column;
+			const pixel p      = changeSaturation(img[i], 1.5);
 
 			const double brightness = 0.299 * p.red +   //
 			                          0.587 * p.green + //
