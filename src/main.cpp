@@ -75,8 +75,7 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 }
 
 // -----------------------------------------------------------------------------
-[[nodiscard]]
-static auto load_image(const char *image_path) {
+[[nodiscard]] static auto load_image(const char *image_path) {
 	int   width, height, original_channels; // NOLINT
 	auto *img = stbi_load(image_path, &width, &height, &original_channels, 3);
 	if (!img) errx(2, "Failed to load image %s", image_path);
@@ -84,8 +83,7 @@ static auto load_image(const char *image_path) {
 }
 
 // -----------------------------------------------------------------------------
-[[nodiscard]]
-static auto make_ascii_art(auto &&img) {
+[[nodiscard]] static auto make_ascii_art(auto &&img) {
 	constexpr char ASCIIMAP[] = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/"
 															"\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 	constexpr int  num_chars  = sizeof ASCIIMAP - 1;
