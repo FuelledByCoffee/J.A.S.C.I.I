@@ -68,9 +68,9 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 	                      G * G * Pg + //
 	                      B * B * Pb);
 
-	p.red   = std::min(std::fabs(P + ((R)-P) * change), 255.);
-	p.green = std::min(std::fabs(P + ((G)-P) * change), 255.);
-	p.blue  = std::min(std::fabs(P + ((B)-P) * change), 255.);
+	p.red   = u8(std::min(std::fabs(P + ((R)-P) * change), 255.));
+	p.green = u8(std::min(std::fabs(P + ((G)-P) * change), 255.));
+	p.blue  = u8(std::min(std::fabs(P + ((B)-P) * change), 255.));
 	return p;
 }
 
