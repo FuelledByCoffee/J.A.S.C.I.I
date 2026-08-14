@@ -28,6 +28,13 @@ static int g_size  = 60;
 static int g_color = false;
 
 // -----------------------------------------------------------------------------
+// this is to give the data to emscripten so that it can resize the div
+EMSCRIPTEN_KEEPALIVE int  image_width() { return g_width_shrunk; }
+EMSCRIPTEN_KEEPALIVE int  image_height() { return g_height_shrunk; }
+EMSCRIPTEN_KEEPALIVE void set_size(int a) { g_size = a; }
+EMSCRIPTEN_KEEPALIVE void set_color(int z) { g_color = z; }
+
+// -----------------------------------------------------------------------------
 // stole this code from here: https://alienryderflex.com/saturation.html
 static pixel changeSaturation(pixel p, double change) {
 	const double Pr = .299;
