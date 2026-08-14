@@ -98,7 +98,6 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 		for (int x = 0; x != g_target_width; x++) {
 			const int   column = int(double(x) / g_target_width * img.m_width);
 			const int   row    = int(double(y) / g_target_height * img.m_height);
-			const int   i      = row * img.m_width + column;
 			const pixel p      = changeSaturation(img[i], 1.5);
 
 			const double brightness = 0.299 * p.red +   //
