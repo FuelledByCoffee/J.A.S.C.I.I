@@ -66,7 +66,7 @@ $(cpp_obj_pattern): %.cpp
 .PHONY: test
 test: all
 	./$(target) -i ../assets/hornet.jpg
-	./$(target) -i ../assets/hornet.jpg -c
+	./$(target) -i ../assets/hornet.jpg -c -s 160
 
 .PHONY: clean
 clean:
