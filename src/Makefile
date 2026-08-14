@@ -44,8 +44,8 @@ compile_commands.json: $(json)
 	@sed -e '1s/^/[\n/' -e '$$s/,$$/\n]/' $^ > $@
 
 .PHONY: debug
-debug: CFLAGS += -g -fsanitize=undefined,address -fno-sanitize=alignment
-debug: CXXFLAGS += -g -fsanitize=undefined,address -fno-sanitize=alignment
+debug: CFLAGS += -g -fsanitize=undefined,address
+debug: CXXFLAGS += -g -fsanitize=undefined,address
 debug: $(target)
 
 .PHONY: release
