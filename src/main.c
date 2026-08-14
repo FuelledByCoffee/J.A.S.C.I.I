@@ -6,13 +6,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#include <stb_image.h>
 #ifdef __EMSCRIPTEN__
 	#include <emscripten.h>
 #else
 	#define EMSCRIPTEN_KEEPALIVE
 #endif
-#include <stb_image.h>
-#include <stb_image_resize2.h>
 
 typedef uint8_t u8;
 
@@ -22,16 +22,15 @@ typedef struct {
 	u8 blue;
 } pixel;
 
-static int g_width_shrunk;
-static int g_height_shrunk;
-static int g_size  = 60;
-static int g_color = false;
+static int g_target_height;
+static int g_target_width = 90; // width
+static int g_color        = false;
 
 // -----------------------------------------------------------------------------
 // this is to give the data to emscripten so that it can resize the div
-EMSCRIPTEN_KEEPALIVE int  image_width() { return g_width_shrunk; }
-EMSCRIPTEN_KEEPALIVE int  image_height() { return g_height_shrunk; }
-EMSCRIPTEN_KEEPALIVE void set_size(int a) { g_size = a; }
+EMSCRIPTEN_KEEPALIVE int  image_width() { return g_target_width; }
+EMSCRIPTEN_KEEPALIVE int  image_height() { return g_target_height; }
+EMSCRIPTEN_KEEPALIVE void set_size(int a) { g_target_width = a; }
 EMSCRIPTEN_KEEPALIVE void set_color(int z) { g_color = z; }
 
 // -----------------------------------------------------------------------------
@@ -56,38 +55,39 @@ static pixel changeSaturation(pixel p, double change) {
 }
 
 // -----------------------------------------------------------------------------
-static pixel *load_image(const char *image_path) {
-	int      width, height, original_channels; // NOLINT
-	stbi_uc *img = stbi_load(image_path, &width, &height, &original_channels, 3);
+static pixel *load_image(const char *image_path, int *height, int *width) {
+	int    original_channels;
+	pixel *img =
+			(pixel *)stbi_load(image_path, width, height, &original_channels, 3);
 	if (!img) errx(1, "Failed to load image %s", image_path);
 
-	const double scale_factor = g_size / fmax(height, width);
-	g_width_shrunk            = (int)(width * scale_factor * 2);
-	g_height_shrunk           = (int)(height * scale_factor);
+	const double aspect_ratio           = (double)*height / *width;
+	const double char_aspect_adjustment = 0.55;
+	g_target_height =
+			(int)(g_target_width * aspect_ratio * char_aspect_adjustment);
 
-	pixel *img_resized =
-			stbir_resize(img, width, height, 0, NULL, g_width_shrunk, g_height_shrunk,
-	                 0, STBIR_RGB, STBIR_TYPE_UINT8, STBIR_EDGE_ZERO,
-	                 STBIR_FILTER_BOX); // stb the goat
-	free(img);
-	return img_resized;
+	return img;
 }
 
 // -----------------------------------------------------------------------------
 static void print_ascii_art(pixel *img, int height, int width) { // NOLINT
-	const char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
+	// const char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
+	const char ASCIIMAP[] = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/"
+													"\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 	const int  num_char   = sizeof ASCIIMAP - 1;
 
-	for (int y = 0; y != height; y++) {
-		for (int x = 0; x != width; x++) {
-			const int   i = y * width + x;
+	for (int y = 0; y != g_target_height; y++) {
+		for (int x = 0; x != g_target_width; x++) {
+			const int   recalc_x = (int)((double)x / g_target_width * width);
+			const int   recalc_y = (int)((double)y / g_target_height * height);
+			const int   i        = recalc_y * width + recalc_x;
 			const pixel p = changeSaturation(img[i], 1.5);
 
-			const double brightness = p.red * 0.2126 +   //
-			                          p.green * 0.7152 + //
-			                          p.blue * 0.0722;
+			const double brightness = 0.299 * p.red +   //
+			                          0.587 * p.green + //
+			                          0.114 * p.blue;
 
-			const int index = (int)brightness * (num_char - 1) / 255;
+			const int index = (int)((brightness / 255.0) * (num_char - 1));
 			if (g_color)
 				printf("\033[38;2;%d;%d;%dm%c\033[0m", p.red, p.green, p.blue,
 				       ASCIIMAP[index]);
@@ -98,40 +98,34 @@ static void print_ascii_art(pixel *img, int height, int width) { // NOLINT
 }
 
 // -----------------------------------------------------------------------------
-static const struct option long_options[] = {
-		{"version",       no_argument, NULL, 'v'},
-		{  "image", required_argument, NULL, 'i'},
-		{  "color",       no_argument, NULL, 'c'},
-		{   "size", required_argument, NULL, 's'},
-		{   "help",       no_argument, NULL, 'h'},
-		{		 NULL,								 0, NULL,   0}
-};
-
-// -----------------------------------------------------------------------------
 int main(int argc, char **argv) {
+
+	const struct option long_options[] = {
+			{"version",       no_argument, NULL, 'v'},
+			{  "image", required_argument, NULL, 'i'},
+			{  "color",       no_argument, NULL, 'c'},
+			{   "size", required_argument, NULL, 's'},
+			{   "help",       no_argument, NULL, 'h'},
+			{     NULL,								 0, NULL,   0}
+  };
+
 	int         opt        = 0;
 	const char *image_path = argv[1];
 	while ((opt = getopt_long(argc, argv, "vi:cs:h", long_options, NULL)) != -1) {
 		switch (opt) {
 			case 'c': g_color = 1; break;
 			case 'i': image_path = optarg; break;
-			case 's': g_size = atoi(optarg); break;
+			case 's': g_target_width = atoi(optarg); break;
 			default: break;
 		}
 	}
 	if (optind < argc) image_path = argv[optind];
 	if (!image_path) errx(1, "Need image!");
 
-	pixel *img = load_image(image_path);
-	print_ascii_art(img, g_height_shrunk, g_width_shrunk);
+	int    height, width; // NOLINT
+	pixel *img = load_image(image_path, &height, &width);
+	print_ascii_art(img, height, width);
 	free(img);
 }
-
-// -----------------------------------------------------------------------------
-// this is to give the data to emscripten so that it can resize the div
-EMSCRIPTEN_KEEPALIVE int  image_width() { return g_width_shrunk; }
-EMSCRIPTEN_KEEPALIVE int  image_height() { return g_height_shrunk; }
-EMSCRIPTEN_KEEPALIVE void set_size(int a) { g_size = a; }
-EMSCRIPTEN_KEEPALIVE void set_color(int z) { g_color = z; }
 
 // vim: ts=2
