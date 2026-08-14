@@ -29,7 +29,7 @@ typedef struct {
 } image;
 
 static int g_target_height;
-static int g_target_width = 90; // width
+static int g_target_width = 90;
 static int g_color        = false;
 
 // -----------------------------------------------------------------------------
