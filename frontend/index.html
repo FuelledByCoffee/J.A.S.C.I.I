@@ -95,10 +95,10 @@
       const cb = document.querySelector('#accept');
       const cc = document.querySelector('#color');
       if (!cb.checked) {
-        Module.ccall('set_size', null, ['number'], [40]);   //high resolution mode off
+        Module.ccall('set_size', null, ['number'], [100]);   //high resolution mode off
         term.options.fontSize = 16;
       } else {
-        Module.ccall('set_size', null, ['number'], [150]);  //high resolution mode on
+        Module.ccall('set_size', null, ['number'], [400]);  //high resolution mode on
         term.options.fontSize = 5;
       }
       if (!cc.checked) {
