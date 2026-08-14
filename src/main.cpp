@@ -3,6 +3,7 @@
 #include <err.h>
 #include <getopt.h>
 #include <memory>
+#include <span>
 #include <sstream>
 #include <unistd.h>
 
@@ -45,11 +46,16 @@ struct image {
 	image(u8 *data, int height, int width, free_func deleter = stbi_image_free)
 		: m_data(reinterpret_cast<pixel_type *>(data), deleter), m_height(height),
 			m_width(width) {}
+
+	auto operator[](int y) -> std::span<pixel_type> {
+		pixel_type *f = m_data.get() + y * m_width;
+		pixel_type *l = f + m_width;
+		return {f, l};
+	}
+
 	u_ptr m_data;
 	int   m_height = 0;
 	int   m_width  = 0;
-
-	pixel_type &operator[](int i) { return m_data.get()[i]; }
 };
 
 // -----------------------------------------------------------------------------
@@ -96,9 +102,9 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 
 	for (int y = 0; y != g_target_height; y++) {
 		for (int x = 0; x != g_target_width; x++) {
-			const int   column = int(double(x) / g_target_width * img.m_width);
 			const int   row    = int(double(y) / g_target_height * img.m_height);
-			const pixel p      = changeSaturation(img[i], 1.5);
+			const int   column = int(double(x) / g_target_width * img.m_width);
+			const pixel p      = changeSaturation(img[row][column], 1.5);
 
 			const double brightness = 0.299 * p.red +   //
 			                          0.587 * p.green + //
