@@ -11,7 +11,16 @@ AlignConsecutiveAssignments:
   PadOperators: true
   AcrossEmptyLines: false
 AlignConsecutiveBitFields: None
-AlignConsecutiveDeclarations: AcrossComments
+AlignConsecutiveDeclarations:
+  Enabled: true
+  AcrossComments: true
+  AcrossEmptyLines: false
+  AlignFunctionDeclarations: true
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+  AlignCaseColons: false
 AlignEscapedNewlines: Left
 AlignOperands:   AlignAfterOperator
 AlignTrailingComments: true
