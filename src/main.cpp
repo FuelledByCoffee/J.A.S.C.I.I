@@ -1,9 +1,8 @@
 #include <algorithm>
+#include <cstddef>
 #include <cstdlib>
 #include <err.h>
 #include <getopt.h>
-#include <memory>
-#include <span>
 #include <sstream>
 #include <unistd.h>
 
@@ -39,26 +38,38 @@ struct pixel {
 	u8 blue;
 };
 
-template <typename pixel_type = pixel, //
-          typename free_func  = decltype(&stbi_image_free)>
+namespace stbi {
 struct image {
-
-	using u_ptr = std::unique_ptr<pixel_type, free_func>;
-
-	image(u8 *data, int height, int width, free_func deleter = stbi_image_free)
-		: m_data(reinterpret_cast<pixel_type *>(data), deleter), m_height(height),
+	image(u8 *data, int height, int width)
+		: m_data(reinterpret_cast<pixel *>(data)), //
+			m_height(height),                        //
 			m_width(width) {}
-
-	auto operator[](int y) -> std::span<pixel_type> {
-		pixel_type *f = m_data.get() + y * m_width;
-		pixel_type *l = f + m_width;
-		return {f, l};
+	image(const image &other)
+		: m_data(
+					(pixel *)std::malloc(other.width() * other.height() * sizeof(pixel))),
+			m_height(other.m_height), //
+			m_width(other.m_width) {
+		auto f = other.m_data;
+		auto l = f + m_width * m_height;
+		std::copy(f, l, m_data);
+		std::cout << "Image copied!\n";
 	}
+	image(image &&other)
+		: m_data(std::exchange(other.m_data, nullptr)), //
+			m_height(other.m_height),                     //
+			m_width(other.m_width) {}
+	~image() { stbi_image_free(m_data); }
 
-	u_ptr m_data;
-	int   m_height = 0;
-	int   m_width  = 0;
+	auto operator[](int y, int x) -> pixel & { return m_data[m_width * y + x]; }
+	auto width() const -> int { return m_width; }
+	auto height() const -> int { return m_height; }
+
+private:
+	pixel *m_data   = nullptr;
+	int    m_height = 0;
+	int    m_width  = 0;
 };
+} // namespace stbi
 
 // -----------------------------------------------------------------------------
 // stole this code from here: https://alienryderflex.com/saturation.html
@@ -83,30 +94,30 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 }
 
 // -----------------------------------------------------------------------------
-[[nodiscard]] static auto load_image(const char *image_path) {
+[[nodiscard]] static auto load_image(const char *image_path) -> stbi::image {
 	int   width, height, original_channels; // NOLINT
 	auto *img = stbi_load(image_path, &width, &height, &original_channels, 3);
-	if (!img) errx(2, "Failed to load image %s", image_path);
-	return image(img, height, width, stbi_image_free);
+	if (!img || original_channels != 3)
+		errx(2, "Failed to load image %s", image_path);
+	return {img, height, width};
 }
 
 // -----------------------------------------------------------------------------
-[[nodiscard]] static auto make_ascii_art(auto &&img) {
+[[nodiscard]] static auto make_ascii_art(stbi::image img) -> std::string {
 	constexpr char ASCIIMAP[] = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/"
 															"\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 	constexpr int  num_chars  = sizeof ASCIIMAP - 1;
 
 	std::stringstream art;
-	const double      aspect_ratio           = double(img.m_height) / img.m_width;
+	const double      aspect_ratio           = double(img.height()) / img.width();
 	constexpr double  char_aspect_adjustment = 0.55;
-	g_target_height =
-			(int)(g_target_width * aspect_ratio * char_aspect_adjustment);
+	g_target_height = int(g_target_width * aspect_ratio * char_aspect_adjustment);
 
 	for (int y = 0; y != g_target_height; y++) {
 		for (int x = 0; x != g_target_width; x++) {
-			const int   row    = int(double(y) / g_target_height * img.m_height);
-			const int   column = int(double(x) / g_target_width * img.m_width);
-			const pixel p      = changeSaturation(img[row][column], 1.5);
+			const int   row    = int(double(y) / g_target_height * img.height());
+			const int   column = int(double(x) / g_target_width * img.width());
+			const pixel p      = changeSaturation(img[row, column], 1.5);
 
 			const double brightness = 0.299 * p.red +   //
 			                          0.587 * p.green + //
