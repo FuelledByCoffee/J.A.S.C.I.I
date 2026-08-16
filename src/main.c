@@ -39,6 +39,18 @@ EMSCRIPTEN_KEEPALIVE int  image_height() { return g_target_height; }
 EMSCRIPTEN_KEEPALIVE void set_size(int a) { g_target_width = a; }
 EMSCRIPTEN_KEEPALIVE void set_color(int z) { g_color = z; }
 
+static void swap(char *a, char *b) {
+	char t = *a;
+	*a     = *b;
+	*b     = t;
+}
+
+static void reverse(char *s, int size) {
+	char *l = s + size;
+	int   n = (l - s) / 2;
+	while (n--) swap(s++, --l);
+}
+
 // -----------------------------------------------------------------------------
 // stole this code from here: https://alienryderflex.com/saturation.html
 static pixel changeSaturation(pixel p, double change) {
@@ -75,12 +87,14 @@ static image load_image(const char *image_path) {
 }
 
 // -----------------------------------------------------------------------------
-static void print_ascii_art(const image *img) {
+static void print_ascii_art(const image *img, bool light_background) {
 	// const char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
 	// Source: https://paulbourke.net/dataformats/asciiart/
-	const char ASCIIMAP[] = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/"
-													"\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
-	const int  num_char   = sizeof ASCIIMAP - 1;
+	char      ASCIIMAP[] = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/"
+												 "\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
+	const int num_char   = sizeof ASCIIMAP - 1;
+
+	if (light_background) reverse(ASCIIMAP, num_char + 1);
 
 	for (int y = 0; y != g_target_height; y++) {
 		for (int x = 0; x != g_target_width; x++) {
@@ -110,17 +124,20 @@ int main(int argc, char **argv) {
 			{"version",       no_argument, NULL, 'v'},
 			{  "image", required_argument, NULL, 'i'},
 			{  "color",       no_argument, NULL, 'c'},
+			{  "light",       no_argument, NULL, 'l'},
 			{   "size", required_argument, NULL, 's'},
 			{   "help",       no_argument, NULL, 'h'},
 			{     NULL,								 0, NULL,   0}
   };
 
-	int         opt        = 0;
-	const char *image_path = argv[1];
-	while ((opt = getopt_long(argc, argv, "vi:cs:h", long_options, NULL)) != -1) {
+	bool        light_background = false;
+	int         opt              = 0;
+	const char *image_path       = argv[1];
+	while ((opt = getopt_long(argc, argv, "vi:cls:h", long_options, NULL)) != -1) {
 		switch (opt) {
 			case 'c': g_color = 1; break;
 			case 'i': image_path = optarg; break;
+			case 'l': light_background = true; break;
 			case 's': g_target_width = atoi(optarg); break;
 			default: break;
 		}
@@ -129,7 +146,7 @@ int main(int argc, char **argv) {
 	if (!image_path) errx(1, "Need image!");
 
 	const image img = load_image(image_path);
-	print_ascii_art(&img);
+	print_ascii_art(&img, light_background);
 	free(img.data);
 }
 
