@@ -77,6 +77,7 @@ static image load_image(const char *image_path) {
 // -----------------------------------------------------------------------------
 static void print_ascii_art(const image *img) {
 	// const char ASCIIMAP[] = "N@#W$9876543210?!abc;:+=-_,.  ";
+	// Source: https://paulbourke.net/dataformats/asciiart/
 	const char ASCIIMAP[] = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/"
 													"\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 	const int  num_char   = sizeof ASCIIMAP - 1;
