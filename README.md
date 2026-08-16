@@ -10,7 +10,7 @@ umm because:
 1. It's free :)
 2. Your images (and potentially videos in the future) are not going to some random data center so that Zuckerberg can feed it to meta
 3. It's freeeeeeeeeeeeee :D
-4. Why not? 
+4. Why not?
 
 
 ### How to use
