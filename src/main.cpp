@@ -40,6 +40,13 @@ struct pixel {
 
 namespace stbi {
 struct image {
+
+	auto operator[](int y, int x) -> pixel & { return m_data[m_width * y + x]; }
+	auto width() const -> int { return m_width; }
+	auto height() const -> int { return m_height; }
+	auto begin() const { return m_data; }
+	auto end() const { return m_data + m_height * m_width; }
+
 	image(u8 *data, int height, int width)
 		: m_data(reinterpret_cast<pixel *>(data)), //
 			m_height(height),                        //
@@ -49,9 +56,7 @@ struct image {
 					(pixel *)std::malloc(other.width() * other.height() * sizeof(pixel))),
 			m_height(other.m_height), //
 			m_width(other.m_width) {
-		auto f = other.m_data;
-		auto l = f + m_width * m_height;
-		std::copy(f, l, m_data);
+		std::ranges::copy(other, m_data);
 		std::cout << "Image copied!\n";
 	}
 	image(image &&other)
@@ -59,10 +64,6 @@ struct image {
 			m_height(other.m_height),                     //
 			m_width(other.m_width) {}
 	~image() { stbi_image_free(m_data); }
-
-	auto operator[](int y, int x) -> pixel & { return m_data[m_width * y + x]; }
-	auto width() const -> int { return m_width; }
-	auto height() const -> int { return m_height; }
 
 private:
 	pixel *m_data   = nullptr;
@@ -153,7 +154,7 @@ int main(int argc, char **argv) {
 			case 'c': color = 1; break;
 			case 'i': image_path = optarg; break;
 			case 's': g_target_width = atoi(optarg); break;
-			default: break;
+			default:  break;
 		}
 	}
 	if (optind < argc) image_path = argv[optind];
