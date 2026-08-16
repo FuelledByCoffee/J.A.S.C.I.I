@@ -1,0 +1,11 @@
+# Source - https://stackoverflow.com/a/69367453
+# Posted by Henry Schreiner, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-08-16, License - CC BY-SA 4.0
+
+repos:
+- repo: https://github.com/pre-commit/mirrors-clang-format
+  rev: v22.1.8
+  hooks:
+  - id: clang-format
+    types_or: [c, c++]
+
