@@ -57,7 +57,6 @@ struct image {
 			m_height(other.m_height), //
 			m_width(other.m_width) {
 		std::ranges::copy(other, m_data);
-		std::cout << "Image copied!\n";
 	}
 	image(image &&other) noexcept
 		: m_data(std::exchange(other.m_data, nullptr)), //
@@ -104,7 +103,7 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 }
 
 // -----------------------------------------------------------------------------
-[[nodiscard]] static auto make_ascii_art(stbi::image img) -> std::string {
+[[nodiscard]] static auto make_ascii_art(auto &&img) -> std::string {
 	constexpr char ASCIIMAP[] = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/"
 															"\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 	constexpr int  num_chars  = sizeof ASCIIMAP - 1;
@@ -160,8 +159,7 @@ int main(int argc, char **argv) {
 	if (optind < argc) image_path = argv[optind];
 	if (!image_path) errx(1, "Need an image");
 
-	auto img = load_image(image_path);
-	std::cout << make_ascii_art(std::move(img));
+	std::cout << make_ascii_art(load_image(image_path));
 }
 
 // vim: ts=2
