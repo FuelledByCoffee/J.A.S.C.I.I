@@ -62,7 +62,13 @@ struct image {
 		: m_data(std::exchange(other.m_data, nullptr)), //
 			m_height(other.m_height),                     //
 			m_width(other.m_width) {}
-	~image() { stbi_image_free(m_data); }
+	~image() {
+		try {
+			stbi_image_free(m_data);
+		} catch (const std::exception &e) {
+			std::cerr << e.what() << '\n';
+		}
+	}
 
 private:
 	pixel *m_data   = nullptr;
