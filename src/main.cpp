@@ -59,7 +59,7 @@ struct image {
 		std::ranges::copy(other, m_data);
 		std::cout << "Image copied!\n";
 	}
-	image(image &&other)
+	image(image &&other) noexcept
 		: m_data(std::exchange(other.m_data, nullptr)), //
 			m_height(other.m_height),                     //
 			m_width(other.m_width) {}
