@@ -72,3 +72,4 @@ test: all
 clean:
 	rm -f $(target)
 	rm -rf $(objects)
+	rm -rf $(json)
