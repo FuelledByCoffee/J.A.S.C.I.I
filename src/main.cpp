@@ -158,6 +158,7 @@ int main(int argc, char **argv) {
 			case 'c': color = 1; break;
 			case 'i': image_path = optarg; break;
 			case 's': g_target_width = atoi(optarg); break;
+			case '?': return 1;
 			default:  break;
 		}
 	}
