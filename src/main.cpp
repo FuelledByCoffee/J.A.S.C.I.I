@@ -103,8 +103,7 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 [[nodiscard]] static auto load_image(const char *image_path) -> stbi::image {
 	int   width, height, original_channels; // NOLINT
 	auto *img = stbi_load(image_path, &width, &height, &original_channels, 3);
-	if (!img || original_channels != 3)
-		errx(2, "Failed to load image %s", image_path);
+	if (!img) errx(2, "Failed to load image %s", image_path);
 	return {img, height, width};
 }
 
