@@ -1,28 +1,37 @@
 #!/bin/bash
 set -e
 
-mkdir -p frontend/scripts
+ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-git submodule update --init --recursive
+mkdir -p "$ROOT_DIR/frontend/scripts"
 
-cd emsdk
+git -C "$ROOT_DIR" submodule update --init --recursive
+
+cd "$ROOT_DIR/emsdk"
 ./emsdk install latest
 ./emsdk activate latest
 source ./emsdk_env.sh
-cd ../src
+cd "$ROOT_DIR"
 
-cmake -B build --fresh -DCMAKE_TOOLCHAIN_FILE="../emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
-cmake --build build
-# emmake make -j target=asciiart.js config=release LDFLAGS="-sINVOKE_RUN=0  -sEXIT_RUNTIME=0  -sALLOW_MEMORY_GROWTH=1  -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap,ccall"
+cmake -S "$ROOT_DIR/src" -B "$ROOT_DIR/build-web" \
+	-DCMAKE_BUILD_TYPE=Release \
+	-DCMAKE_EXECUTABLE_SUFFIX=".js" \
+	-DCMAKE_TOOLCHAIN_FILE="$ROOT_DIR/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" \
+	-DCMAKE_EXE_LINKER_FLAGS="\
+		-sINVOKE_RUN=0 \
+	    -sEXIT_RUNTIME=0 \
+	    -sALLOW_MEMORY_GROWTH=1 \
+		-sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap,ccall"
 
-ln -sfn ../../src/build/asciiart.js ../frontend/scripts/asciiart.js
-ln -sfn ../../src/build/asciiart.wasm ../frontend/scripts/asciiart.wasm
-cd ..
+cmake --build "$ROOT_DIR/build-web"
 
-npm install
-cd frontend
+ln -sfn "$ROOT_DIR/build-web/asciiart.js" "$ROOT_DIR/frontend/scripts/asciiart.js"
+ln -sfn "$ROOT_DIR/build-web/asciiart.wasm" "$ROOT_DIR/frontend/scripts/asciiart.wasm"
+
+npm install --prefix "$ROOT_DIR"
+cd "$ROOT_DIR/frontend"
 npm install ejs
 npm install
 curl -L https://unpkg.com/@tailwindcss/browser@4 -o scripts/tailwind-browser.js
-cd ..
-npm install
+cd "$ROOT_DIR"
+npm install --prefix "$ROOT_DIR"
