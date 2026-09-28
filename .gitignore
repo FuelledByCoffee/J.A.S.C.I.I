@@ -5,9 +5,9 @@ asciiart
 emsdk
 node_modules
 package-lock.json
-frontend/scripts/a.out*
+frontend/asciiart*
+frontend/scripts/asciiart*
 frontend/style.css
 frontend/scripts/tailwind-browser.js
 frontend/node_modules
-frontend/a.out.js
-frontend/a.out.wasm
+build-web
