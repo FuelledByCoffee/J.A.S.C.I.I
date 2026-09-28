@@ -1,10 +1,7 @@
 #!/bin/bash
 set -e
 
-mkdir -p src/external frontend/scripts
-
-curl -sL https://raw.githubusercontent.com/nothings/stb/master/stb_image.h -o src/external/stb_image.h
-curl -sL https://raw.githubusercontent.com/nothings/stb/master/stb_image_resize2.h -o src/external/stb_image_resize2.h
+mkdir -p frontend/scripts
 
 git submodule update --init --recursive
 
@@ -14,11 +11,11 @@ cd emsdk
 source ./emsdk_env.sh
 cd ../src
 
-emmake make -j
+emcmake cmake -B build
 # emmake make -j target=a.out.js config=release LDFLAGS="-sINVOKE_RUN=0  -sEXIT_RUNTIME=0  -sALLOW_MEMORY_GROWTH=1  -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap,ccall"
 
-mv a.out.js ../frontend/scripts
-mv a.out.wasm ../frontend/scripts
+ln -s build/a.out.js ../frontend/scripts
+ln -s build/a.out.wasm ../frontend/scripts
 cd ..
 
 npm install

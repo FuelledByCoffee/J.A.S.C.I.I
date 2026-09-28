@@ -1,7 +1,6 @@
 .DS_Store
 *.dSYM
 main.dSYM
-external
 asciiart
 emsdk
 node_modules
