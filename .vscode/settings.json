@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/home/eckho/J.A.S.C.I.I/src"
+    "cmake.sourceDirectory": "${workspaceFolder}/src",
+    "cmake.buildDirectory": "${workspaceFolder}/src/build",
 }
