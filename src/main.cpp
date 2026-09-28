@@ -49,19 +49,19 @@ struct image {
 
 	image(u8 *data, int height, int width)
 		: m_data(reinterpret_cast<pixel *>(data)), //
-			m_height(height),                        //
-			m_width(width) {}
+		  m_height(height),                        //
+		  m_width(width) {}
 	image(const image &other)
-		: m_data(
-					(pixel *)std::malloc(other.width() * other.height() * sizeof(pixel))),
-			m_height(other.m_height), //
-			m_width(other.m_width) {
+		: m_data((pixel *)std::malloc(other.width() * other.height()
+	                                  * sizeof(pixel))),
+		  m_height(other.m_height), //
+		  m_width(other.m_width) {
 		std::ranges::copy(other, m_data);
 	}
 	image(image &&other) noexcept
 		: m_data(std::exchange(other.m_data, nullptr)), //
-			m_height(other.m_height),                     //
-			m_width(other.m_width) {}
+		  m_height(other.m_height),                     //
+		  m_width(other.m_width) {}
 	~image() {
 		try {
 			stbi_image_free(m_data);
@@ -110,13 +110,14 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 // -----------------------------------------------------------------------------
 [[nodiscard]] static auto make_ascii_art(auto &&img) -> std::string {
 	constexpr char ASCIIMAP[] = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/"
-															"\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
+								"\\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
 	constexpr int  num_chars  = sizeof ASCIIMAP - 1;
 
 	std::stringstream art;
-	const double      aspect_ratio           = double(img.height()) / img.width();
+	const double      aspect_ratio = double(img.height()) / img.width();
 	constexpr double  char_aspect_adjustment = 0.55;
-	g_target_height = int(g_target_width * aspect_ratio * char_aspect_adjustment);
+	g_target_height =
+			int(g_target_width * aspect_ratio * char_aspect_adjustment);
 
 	auto resize_index = [&img](int y, int x) -> std::pair<int, int> {
 		return {int(double(y) / g_target_height * img.height()),
@@ -131,7 +132,8 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 			                          0.587 * p.green + //
 			                          0.114 * p.blue;
 
-			const unsigned index = unsigned(brightness / 255.0 * (num_chars - 1));
+			const unsigned index =
+					unsigned(brightness / 255.0 * (num_chars - 1));
 			if (color)
 				art << std::format("\033[38;2;{:d};{:d};{:d}m{}\033[0m", //
 				                   p.red, p.green, p.blue, ASCIIMAP[index]);
@@ -146,17 +148,18 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 int main(int argc, char **argv) {
 
 	constexpr struct option long_options[] = {
-			{"version",       no_argument, NULL, 'v'},
-			{  "image", required_argument, NULL, 'i'},
-			{  "color",       no_argument, NULL, 'c'},
-			{   "size", required_argument, NULL, 's'},
-			{   "help",       no_argument, NULL, 'h'},
-			{     NULL,                 0, NULL,   0}
-  };
+			{"version", no_argument,       NULL, 'v'},
+			{"image",   required_argument, NULL, 'i'},
+			{"color",   no_argument,       NULL, 'c'},
+			{"size",    required_argument, NULL, 's'},
+			{"help",    no_argument,       NULL, 'h'},
+			{NULL,      0,                 NULL, 0  }
+    };
 
 	int         opt        = 0;
 	const char *image_path = argv[1];
-	while ((opt = getopt_long(argc, argv, "vi:cs:h", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "vi:cs:h", long_options, NULL))
+	       != -1) {
 		switch (opt) {
 			case 'c': color = 1; break;
 			case 'i': image_path = optarg; break;
@@ -169,5 +172,3 @@ int main(int argc, char **argv) {
 
 	std::cout << make_ascii_art(load_image(image_path));
 }
-
-// vim: ts=2
