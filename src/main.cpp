@@ -118,12 +118,15 @@ static constexpr auto changeSaturation(pixel p, double change) -> pixel {
 	constexpr double  char_aspect_adjustment = 0.55;
 	g_target_height = int(g_target_width * aspect_ratio * char_aspect_adjustment);
 
+	auto resize_index = [&img](int y, int x) -> std::pair<int, int> {
+		return {int(double(y) / g_target_height * img.height()),
+		        int(double(x) / g_target_width * img.width())};
+	};
+
 	for (int y = 0; y != g_target_height; y++) {
 		for (int x = 0; x != g_target_width; x++) {
-			const int   row    = int(double(y) / g_target_height * img.height());
-			const int   column = int(double(x) / g_target_width * img.width());
-			const pixel p      = changeSaturation(img[row, column], 1.5);
-
+			auto [row, column]      = resize_index(y, x);
+			const pixel  p          = changeSaturation(img[row, column], 1.5);
 			const double brightness = 0.299 * p.red +   //
 			                          0.587 * p.green + //
 			                          0.114 * p.blue;
@@ -148,7 +151,7 @@ int main(int argc, char **argv) {
 			{  "color",       no_argument, NULL, 'c'},
 			{   "size", required_argument, NULL, 's'},
 			{   "help",       no_argument, NULL, 'h'},
-			{     NULL,								 0, NULL,   0}
+			{     NULL,                 0, NULL,   0}
   };
 
 	int         opt        = 0;
@@ -159,7 +162,6 @@ int main(int argc, char **argv) {
 			case 'i': image_path = optarg; break;
 			case 's': g_target_width = atoi(optarg); break;
 			case '?': return 1;
-			default:  break;
 		}
 	}
 	if (optind < argc) image_path = argv[optind];
