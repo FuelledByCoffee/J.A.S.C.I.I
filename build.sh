@@ -13,10 +13,10 @@ cd ../src
 
 cmake -B build --fresh -DCMAKE_TOOLCHAIN_FILE="../emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
 cmake --build build
-# emmake make -j target=a.out.js config=release LDFLAGS="-sINVOKE_RUN=0  -sEXIT_RUNTIME=0  -sALLOW_MEMORY_GROWTH=1  -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap,ccall"
+# emmake make -j target=asciiart.js config=release LDFLAGS="-sINVOKE_RUN=0  -sEXIT_RUNTIME=0  -sALLOW_MEMORY_GROWTH=1  -sEXPORTED_RUNTIME_METHODS=FS,callMain,cwrap,ccall"
 
-ln -sfn ../../src/build/a.out.js ../frontend/scripts/a.out.js
-ln -sfn ../../src/build/a.out.wasm ../frontend/scripts/a.out.wasm
+ln -sfn ../../src/build/asciiart.js ../frontend/scripts/asciiart.js
+ln -sfn ../../src/build/asciiart.wasm ../frontend/scripts/asciiart.wasm
 cd ..
 
 npm install

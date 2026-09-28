@@ -8,7 +8,7 @@ target_compile_options(asciiart PRIVATE -Wall -Wextra -Wshadow)
 
 # Emscripten specific compiler/linker flags
 if(EMSCRIPTEN)
-    set_target_properties(asciiart PROPERTIES OUTPUT_NAME "a.out" SUFFIX ".js")
+    set_target_properties(asciiart PROPERTIES SUFFIX ".js")
     target_link_options(
         asciiart
         PUBLIC
