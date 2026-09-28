@@ -1,7 +1,9 @@
 #!/bin/bash
-source emsdk/emsdk_env.sh
-cd frontend
-# emrun index.html
+set -e
 
-emrun --browser="/mnt/c/Program Files/Google/Chrome/Application/chrome.exe" index.html \
-|| emrun --browser="/Applications/Safari.app/Contents/MacOS/Safari" index.html
+ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT_DIR"
+
+bash build.sh
+
+node frontend/scripts/server.js
